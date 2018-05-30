@@ -106,11 +106,12 @@ class Main extends egret.DisplayObjectContainer {
         gameStage.graphics.endFill();
         this.addChild(gameStage);
 
-        let rockerRadius = Main.stageWidth/6;
-        let rockerX = rockerRadius+20;
-        let rockerY = rockerRadius*7+20;
         
         /******************方向摇杆***********************/
+        let rockerRadius = Main.stageWidth/6;
+        let rockerX = rockerRadius+40;
+        let rockerY = rockerRadius*7+20;
+
         let rocker1 = new egret.Shape();
         rocker1.graphics.beginFill(0x000000, 1);
         rocker1.graphics.drawCircle(0, 0, rockerRadius);
@@ -183,13 +184,13 @@ class Main extends egret.DisplayObjectContainer {
 
         let btnA = new egret.Shape();
         btnA.graphics.beginFill(0xe80000, 1);
-        btnA.graphics.drawCircle(Main.stageWidth-rockerRadius+20, rockerRadius*7+20, rockerRadius-40);
+        btnA.graphics.drawCircle(Main.stageWidth-rockerRadius+20, rockerRadius*7-20, rockerRadius-40);
         btnA.graphics.endFill();
         this.addChild(btnA);
 
         let btnB = new egret.Shape();
         btnB.graphics.beginFill(0xe80000, 1);
-        btnB.graphics.drawCircle(Main.stageWidth-rockerRadius+20-(rockerRadius*2-80), rockerRadius*7+20+rockerRadius*2-80, rockerRadius-40);
+        btnB.graphics.drawCircle(Main.stageWidth-rockerRadius+20-(rockerRadius*2-80), rockerRadius*7+rockerRadius*2-120, rockerRadius-40);
         btnB.graphics.endFill();
         this.addChild(btnB);
 

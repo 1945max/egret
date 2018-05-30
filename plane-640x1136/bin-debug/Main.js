@@ -143,10 +143,10 @@ var Main = (function (_super) {
         gameStage.graphics.drawRoundRect(20, 20, Main.stageWidth - 40, Main.stageWidth - 40, 40, 40);
         gameStage.graphics.endFill();
         this.addChild(gameStage);
-        var rockerRadius = Main.stageWidth / 6;
-        var rockerX = rockerRadius + 20;
-        var rockerY = rockerRadius * 7 + 20;
         /******************方向摇杆***********************/
+        var rockerRadius = Main.stageWidth / 6;
+        var rockerX = rockerRadius + 40;
+        var rockerY = rockerRadius * 7 + 20;
         var rocker1 = new egret.Shape();
         rocker1.graphics.beginFill(0x000000, 1);
         rocker1.graphics.drawCircle(0, 0, rockerRadius);
@@ -222,12 +222,12 @@ var Main = (function (_super) {
         /********************方向摇杆**********************/
         var btnA = new egret.Shape();
         btnA.graphics.beginFill(0xe80000, 1);
-        btnA.graphics.drawCircle(Main.stageWidth - rockerRadius + 20, rockerRadius * 7 + 20, rockerRadius - 40);
+        btnA.graphics.drawCircle(Main.stageWidth - rockerRadius + 20, rockerRadius * 7 - 20, rockerRadius - 40);
         btnA.graphics.endFill();
         this.addChild(btnA);
         var btnB = new egret.Shape();
         btnB.graphics.beginFill(0xe80000, 1);
-        btnB.graphics.drawCircle(Main.stageWidth - rockerRadius + 20 - (rockerRadius * 2 - 80), rockerRadius * 7 + 20 + rockerRadius * 2 - 80, rockerRadius - 40);
+        btnB.graphics.drawCircle(Main.stageWidth - rockerRadius + 20 - (rockerRadius * 2 - 80), rockerRadius * 7 + rockerRadius * 2 - 120, rockerRadius - 40);
         btnB.graphics.endFill();
         this.addChild(btnB);
         var btnStart = new egret.Shape();
