@@ -133,6 +133,7 @@ var Main = (function (_super) {
     Main.prototype.createGameScene = function () {
         Main.stageWidth = this.stage.stageWidth;
         Main.stageHeight = this.stage.stageHeight;
+        /******************游戏窗口***********************/
         var bg = new egret.Shape();
         bg.graphics.beginFill(0x848484, 1);
         bg.graphics.drawRect(0, 0, Main.stageWidth, Main.stageHeight);
@@ -143,43 +144,46 @@ var Main = (function (_super) {
         gameStage.graphics.drawRoundRect(20, 20, Main.stageWidth - 40, Main.stageWidth - 40, 40, 40);
         gameStage.graphics.endFill();
         this.addChild(gameStage);
+        Main.gameStageContainer = new GameStageContainer(40, 40, Main.stageWidth - 80, Main.stageWidth - 80);
+        this.addChild(Main.gameStageContainer);
+        /******************游戏窗口***********************/
         /******************方向摇杆***********************/
         var rockerRadius = Main.stageWidth / 6;
-        var rockerX = rockerRadius + 40;
-        var rockerY = rockerRadius * 7 + 20;
+        Main.rockerX = rockerRadius + 40;
+        Main.rockerY = rockerRadius * 7 + 20;
         var rocker1 = new egret.Shape();
         rocker1.graphics.beginFill(0x000000, 1);
         rocker1.graphics.drawCircle(0, 0, rockerRadius);
         rocker1.graphics.endFill();
-        rocker1.x = rockerX;
-        rocker1.y = rockerY;
+        rocker1.x = Main.rockerX;
+        rocker1.y = Main.rockerY;
         this.addChild(rocker1);
         var rocker2 = new egret.Shape();
         var rockerRadius2 = rockerRadius - 40;
         rocker2.graphics.beginFill(0xe80000, 1);
         rocker2.graphics.drawCircle(0, 0, rockerRadius2);
         rocker2.graphics.endFill();
-        rocker2.x = rockerX;
-        rocker2.y = rockerY;
+        rocker2.x = Main.rockerX;
+        rocker2.y = Main.rockerY;
         this.addChild(rocker2);
         rocker2.touchEnabled = true;
         rocker2.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (evt) {
-            var b = evt.stageX - rockerX;
-            var a = evt.stageY - rockerY;
+            var b = evt.stageX - Main.rockerX;
+            var a = evt.stageY - Main.rockerY;
             var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
             var cos = b / c;
             if (rockerRadius2 < c) {
                 var bL = rockerRadius2 * cos;
                 var aL = Math.sqrt(Math.pow(rockerRadius2, 2) - Math.pow(bL, 2));
-                rocker2.x = rockerX + bL;
-                if ((evt.stageY - rockerY) > 0) {
-                    rocker2.y = rockerY + aL;
+                rocker2.x = Main.rockerX + bL;
+                if ((evt.stageY - Main.rockerY) > 0) {
+                    rocker2.y = Main.rockerY + aL;
                 }
-                else if ((evt.stageY - rockerY) < 0) {
-                    rocker2.y = rockerY - aL;
+                else if ((evt.stageY - Main.rockerY) < 0) {
+                    rocker2.y = Main.rockerY - aL;
                 }
                 else {
-                    rocker2.y = rockerY;
+                    rocker2.y = Main.rockerY;
                 }
             }
             else {
@@ -188,22 +192,22 @@ var Main = (function (_super) {
             }
         }, this);
         rocker2.addEventListener(egret.TouchEvent.TOUCH_MOVE, function (evt) {
-            var b = evt.stageX - rockerX;
-            var a = evt.stageY - rockerY;
+            var b = evt.stageX - Main.rockerX;
+            var a = evt.stageY - Main.rockerY;
             var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
             var cos = b / c;
             if (rockerRadius2 < c) {
                 var bL = rockerRadius2 * cos;
                 var aL = Math.sqrt(Math.pow(rockerRadius2, 2) - Math.pow(bL, 2));
-                rocker2.x = rockerX + bL;
-                if ((evt.stageY - rockerY) > 0) {
-                    rocker2.y = rockerY + aL;
+                rocker2.x = Main.rockerX + bL;
+                if ((evt.stageY - Main.rockerY) > 0) {
+                    rocker2.y = Main.rockerY + aL;
                 }
-                else if ((evt.stageY - rockerY) < 0) {
-                    rocker2.y = rockerY - aL;
+                else if ((evt.stageY - Main.rockerY) < 0) {
+                    rocker2.y = Main.rockerY - aL;
                 }
                 else {
-                    rocker2.y = rockerY;
+                    rocker2.y = Main.rockerY;
                 }
             }
             else {
@@ -212,12 +216,12 @@ var Main = (function (_super) {
             }
         }, this);
         rocker2.addEventListener(egret.TouchEvent.TOUCH_END, function (evt) {
-            rocker2.x = rockerX;
-            rocker2.y = rockerY;
+            rocker2.x = Main.rockerX;
+            rocker2.y = Main.rockerY;
         }, this);
         rocker2.addEventListener(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE, function (evt) {
-            rocker2.x = rockerX;
-            rocker2.y = rockerY;
+            rocker2.x = Main.rockerX;
+            rocker2.y = Main.rockerY;
         }, this);
         /********************方向摇杆**********************/
         var btnA = new egret.Shape();
@@ -247,16 +251,13 @@ var Main = (function (_super) {
         btnSelect.y = Main.stageHeight - rockerRadius - 20;
         this.addChild(btnSelect);
     };
-    /**
-     * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
-     * Create a Bitmap object according to name keyword.As for the property of name please refer to the configuration file of resources/resource.json.
-     */
-    Main.prototype.createBitmapByName = function (name) {
-        var result = new egret.Bitmap();
-        var texture = RES.getRes(name);
-        result.texture = texture;
-        return result;
+    Main.prototype.createPalyer = function (x, y, width, height) {
+        var player = new egret.Shape();
+        player.graphics.beginFill(0x009933, 1);
+        player.graphics.drawRect(x, y, width, height);
+        return player;
     };
+    Main.playerSpeed = 1;
     return Main;
 }(egret.DisplayObjectContainer));
 __reflect(Main.prototype, "Main");

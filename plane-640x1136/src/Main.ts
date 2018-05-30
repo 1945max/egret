@@ -85,6 +85,15 @@ class Main extends egret.DisplayObjectContainer {
 
     public static stageWidth:number;
 
+    public static rockerX:number;
+    public static rockerY:number;
+
+    public static player:egret.Shape;
+
+    public static playerSpeed = 1;
+
+    public static gameStageContainer:egret.DisplayObjectContainer;
+
     /**
      * 创建游戏场景
      * Create a game scene
@@ -93,6 +102,8 @@ class Main extends egret.DisplayObjectContainer {
 
         Main.stageWidth = this.stage.stageWidth;
         Main.stageHeight = this.stage.stageHeight;
+
+        /******************游戏窗口***********************/
 
         let bg = new egret.Shape();
         bg.graphics.beginFill(0x848484, 1);
@@ -106,18 +117,24 @@ class Main extends egret.DisplayObjectContainer {
         gameStage.graphics.endFill();
         this.addChild(gameStage);
 
+        Main.gameStageContainer = new GameStageContainer(40, 40, Main.stageWidth-80, Main.stageWidth-80);
+        this.addChild(Main.gameStageContainer);
+
+
+        /******************游戏窗口***********************/
+
         
         /******************方向摇杆***********************/
         let rockerRadius = Main.stageWidth/6;
-        let rockerX = rockerRadius+40;
-        let rockerY = rockerRadius*7+20;
+        Main.rockerX = rockerRadius+40;
+        Main.rockerY = rockerRadius*7+20;
 
         let rocker1 = new egret.Shape();
         rocker1.graphics.beginFill(0x000000, 1);
         rocker1.graphics.drawCircle(0, 0, rockerRadius);
         rocker1.graphics.endFill();
-        rocker1.x = rockerX;
-        rocker1.y = rockerY;
+        rocker1.x = Main.rockerX;
+        rocker1.y = Main.rockerY;
         this.addChild(rocker1);
 
         let rocker2 = new egret.Shape();
@@ -125,26 +142,26 @@ class Main extends egret.DisplayObjectContainer {
         rocker2.graphics.beginFill(0xe80000, 1);
         rocker2.graphics.drawCircle(0, 0, rockerRadius2);
         rocker2.graphics.endFill();
-        rocker2.x = rockerX;
-        rocker2.y = rockerY;
+        rocker2.x = Main.rockerX;
+        rocker2.y = Main.rockerY;
         this.addChild(rocker2);
 
         rocker2.touchEnabled = true;
         rocker2.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function(evt:egret.TouchEvent):void {
-            let b = evt.stageX - rockerX;
-            let a = evt.stageY - rockerY;
+            let b = evt.stageX - Main.rockerX;
+            let a = evt.stageY - Main.rockerY;
             let c = Math.sqrt(Math.pow(a, 2) + Math.pow(b,2));
             let cos = b/c;
             if (rockerRadius2 < c) {
                 let bL=rockerRadius2*cos;
                 let aL=Math.sqrt(Math.pow(rockerRadius2, 2) - Math.pow(bL, 2));
-                rocker2.x = rockerX + bL;
-                if ((evt.stageY - rockerY)>0) {
-                    rocker2.y = rockerY + aL;
-                } else if ((evt.stageY - rockerY)<0) {
-                    rocker2.y = rockerY - aL;
+                rocker2.x = Main.rockerX + bL;
+                if ((evt.stageY - Main.rockerY)>0) {
+                    rocker2.y = Main.rockerY + aL;
+                } else if ((evt.stageY - Main.rockerY)<0) {
+                    rocker2.y = Main.rockerY - aL;
                 } else {
-                    rocker2.y = rockerY;
+                    rocker2.y = Main.rockerY;
                 }
             } else {
                 rocker2.x = evt.stageX;
@@ -152,20 +169,20 @@ class Main extends egret.DisplayObjectContainer {
             }
         }, this);
        rocker2.addEventListener(egret.TouchEvent.TOUCH_MOVE, function(evt:egret.TouchEvent):void {
-            let b = evt.stageX - rockerX;
-            let a = evt.stageY - rockerY;
+            let b = evt.stageX - Main.rockerX;
+            let a = evt.stageY - Main.rockerY;
             let c = Math.sqrt(Math.pow(a, 2) + Math.pow(b,2));
             let cos = b/c;
             if (rockerRadius2 < c) {
                 let bL=rockerRadius2*cos;
                 let aL=Math.sqrt(Math.pow(rockerRadius2, 2) - Math.pow(bL, 2));
-                rocker2.x = rockerX + bL;
-                if ((evt.stageY - rockerY)>0) {
-                    rocker2.y = rockerY + aL;
-                } else if ((evt.stageY - rockerY)<0) {
-                    rocker2.y = rockerY - aL;
+                rocker2.x = Main.rockerX + bL;
+                if ((evt.stageY - Main.rockerY)>0) {
+                    rocker2.y = Main.rockerY + aL;
+                } else if ((evt.stageY - Main.rockerY)<0) {
+                    rocker2.y = Main.rockerY - aL;
                 } else {
-                    rocker2.y = rockerY;
+                    rocker2.y = Main.rockerY;
                 }
             } else {
                 rocker2.x = evt.stageX;
@@ -173,12 +190,12 @@ class Main extends egret.DisplayObjectContainer {
             }
         }, this);
         rocker2.addEventListener(egret.TouchEvent.TOUCH_END, function(evt:egret.TouchEvent):void {
-            rocker2.x = rockerX;
-            rocker2.y = rockerY;
+            rocker2.x = Main.rockerX;
+            rocker2.y = Main.rockerY;
         }, this);
         rocker2.addEventListener(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE, function(evt:egret.TouchEvent):void {
-            rocker2.x = rockerX;
-            rocker2.y = rockerY;
+            rocker2.x = Main.rockerX;
+            rocker2.y = Main.rockerY;
         }, this);
         /********************方向摇杆**********************/
 
@@ -211,18 +228,14 @@ class Main extends egret.DisplayObjectContainer {
         btnSelect.x = Main.stageWidth/2-60;
         btnSelect.y = Main.stageHeight-rockerRadius-20;
         this.addChild(btnSelect);
+
     }
 
-    /**
-     * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
-     * Create a Bitmap object according to name keyword.As for the property of name please refer to the configuration file of resources/resource.json.
-     */
-    private createBitmapByName(name: string) {
-        let result = new egret.Bitmap();
-        let texture: egret.Texture = RES.getRes(name);
-        result.texture = texture;
-        return result;
+    private createPalyer(x:number, y:number, width:number, height:number):egret.Shape {
+        let player = new egret.Shape();
+        player.graphics.beginFill(0x009933, 1);
+        player.graphics.drawRect(x, y, width, height);
+        return player;
     }
 
-    
 }

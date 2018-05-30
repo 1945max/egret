@@ -9,7 +9,9 @@
 		"libs/modules/promise/promise.js"
 	],
 	"game": [
+		"bin-debug/GameStageContainer.js",
 		"bin-debug/LoadingUI.js",
-		"bin-debug/Main.js"
+		"bin-debug/Main.js",
+		"bin-debug/Player.js"
 	]
 }
