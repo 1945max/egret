@@ -196,13 +196,13 @@ var Main = (function (_super) {
                 rocker2.x = evt.stageX;
                 rocker2.y = evt.stageY;
             }
+            Main.player.operatePlayerRun(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
         }, this);
         rocker2.addEventListener(egret.TouchEvent.TOUCH_MOVE, function (evt) {
             var b = evt.stageX - Main.rockerX;
             var a = evt.stageY - Main.rockerY;
             var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
             var cos = b / c;
-            Main.player.operatePlayerRun(cos, 1);
             if (rockerRadius2 < c) {
                 var bL = rockerRadius2 * cos;
                 var aL = Math.sqrt(Math.pow(rockerRadius2, 2) - Math.pow(bL, 2));

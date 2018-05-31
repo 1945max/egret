@@ -2,32 +2,66 @@ class Player extends egret.Shape {
 
     public speed = 1;
 
-    public s = 1;
+    public quadrant = 1;
     /* 
      * 计算自机运行方向与角速度，并控制自机移动
      */
-    public operatePlayerRun(cos:number, s:number) {
-        switch(s) {
+    public operatePlayerRun(cos:number, currX:number, currY:number, oX:number, oY:number) {
+        switch(this.computeQuadrant(currX, currY, oX, oY)) {
             case 1:
                 //第一象限
-                Main.player.x-=this.speed*cos;
-                Main.player.y-=Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*cos, 2));
+                console.log("Quadrant:"+1);
+                Main.player.x = Main.player.x - this.speed*cos;
+                Main.player.y = Main.player.y - Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*cos, 2));
             ;break;
             case 2:
                 //第二象限
-                Main.player.x+=this.speed*cos;
-                Main.player.y-=Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*cos, 2));
+                console.log("Quadrant:"+2);
+                Main.player.x = Main.player.x + this.speed*cos;
+                Main.player.y = Main.player.y - Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*cos, 2));
             ;break;
             case 3:
                 //第三象限
-                Main.player.x+=this.speed*cos;
-                Main.player.y+=Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*cos, 2));
+                console.log("Quadrant:"+3);
+                Main.player.x = Main.player.x + this.speed*cos;
+                Main.player.y = Main.player.y + Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*cos, 2));
             ;break;
             case 4:
                 //第四象限
-                Main.player.x-=this.speed*cos;
-                Main.player.y+=Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*cos, 2));
+                console.log("Quadrant:"+4);
+                Main.player.x = Main.player.x - this.speed*cos;
+                Main.player.y = Main.player.y + Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*cos, 2));
             ;break;
+            default:
+                //y轴无速度
+                if ((currX - oX)>0) {
+                    Main.player.x+=this.speed
+                } else if ((currX - oX)<0) {
+                    Main.player.x-=this.speed
+                }
+                //x轴无速度
+                if ((currY - oY)>0) {
+                    Main.player.y+=this.speed
+                } else if ((currY - oY)<0) {
+                    Main.player.y-=this.speed
+                }
+            ;
         }
+    }
+
+    private computeQuadrant(currX:number, currY:number, oX:number, oY:number) {
+        if ((currX - oX)<0 && (currY - oY)<0) {
+            return 1;
+        }
+        if ((currX - oX)>0 && (currY - oY)<0) {
+            return 2;
+        }
+        if ((currX - oX)>0 && (currY - oY)>0) {
+            return 3;
+        }
+        if ((currX - oX)<0 && (currY - oY)>0) {
+            return 4;
+        }
+        return 0;
     }
 }
