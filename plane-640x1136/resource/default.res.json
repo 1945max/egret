@@ -1,4 +1,15 @@
 {
-	"groups": [],
-	"resources": []
+	"groups": [
+		{
+			"name": "preload",
+			"keys": "bgm_mp3"
+		}
+	],
+	"resources": [
+		{
+			"name": "bgm_mp3",
+			"type": "sound",
+			"url": "assets/bgm.mp3"
+		}
+	]
 }

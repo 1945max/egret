@@ -63,7 +63,7 @@ class Main extends egret.DisplayObjectContainer {
     }
 
     private async runGame() {
-        // await this.loadResource()
+        await this.loadResource();
         this.createGameScene();
     }
 
@@ -72,6 +72,7 @@ class Main extends egret.DisplayObjectContainer {
             const loadingView = new LoadingUI();
             this.stage.addChild(loadingView);
             await RES.loadConfig("resource/default.res.json", "resource/");
+            await RES.loadGroup("preload", 1, loadingView);
             this.stage.removeChild(loadingView);
         }
         catch (e) {
@@ -93,6 +94,8 @@ class Main extends egret.DisplayObjectContainer {
     public static playerSpeed = 1;
 
     public static gameStageContainer:GameStageContainer;
+
+    public static soundChannel:egret.SoundChannel;
 
     /**
      * 创建游戏场景
@@ -127,6 +130,7 @@ class Main extends egret.DisplayObjectContainer {
         player.y = Main.gameStageContainer.height-50;
         Main.player = player;
         Main.gameStageContainer.addChild(player);
+        Main.gameStageContainer.setChildIndex(player, 20);
         Main.gameStageContainer.swapChildren(player, Main.gameStageContainer.pointPanel);
 
         /******************游戏窗口***********************/
@@ -187,10 +191,13 @@ class Main extends egret.DisplayObjectContainer {
         btnA.graphics.beginFill(0xe80000, 1);
         btnA.graphics.drawCircle(Main.stageWidth-rockerRadius+20, rockerRadius*7-20, rockerRadius-40);
         btnA.graphics.endFill();
+        btnA.touchEnabled = true;
         btnA.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function(evt:egret.TouchEvent):void {
-            Main.player.shoot()
+            btnA.alpha = 0.5;
+            Main.player.longShoot();
         }, this);
         btnA.addEventListener(egret.TouchEvent.TOUCH_END, function(evt:egret.TouchEvent):void {
+            btnA.alpha = 1;
             Main.player.stopShoot();
         }, this);
         this.addChild(btnA);
@@ -218,6 +225,9 @@ class Main extends egret.DisplayObjectContainer {
         btnSelect.x = Main.stageWidth/2-60;
         btnSelect.y = Main.stageHeight-rockerRadius-20;
         this.addChild(btnSelect);
+        let sound:egret.Sound = RES.getRes("bgm_mp3");
+        Main.soundChannel = sound.play(0, -1);
+        
     }
 
     private rockerEvent(evt:egret.TouchEvent, rockerRadius2:number, rocker2:egret.Shape) {

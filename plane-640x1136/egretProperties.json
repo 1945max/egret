@@ -24,5 +24,11 @@
     {
       "name": "promise"
     }
-  ]
+  ],
+  "targets": {
+    "android": {
+      "appname": "plane",
+      "packagename": "com.ryx"
+    }
+  }
 }

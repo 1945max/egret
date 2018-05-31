@@ -97,9 +97,13 @@ var Main = (function (_super) {
     Main.prototype.runGame = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                // await this.loadResource()
-                this.createGameScene();
-                return [2 /*return*/];
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.loadResource()];
+                    case 1:
+                        _a.sent();
+                        this.createGameScene();
+                        return [2 /*return*/];
+                }
             });
         });
     };
@@ -109,19 +113,22 @@ var Main = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
+                        _a.trys.push([0, 3, , 4]);
                         loadingView = new LoadingUI();
                         this.stage.addChild(loadingView);
                         return [4 /*yield*/, RES.loadConfig("resource/default.res.json", "resource/")];
                     case 1:
                         _a.sent();
-                        this.stage.removeChild(loadingView);
-                        return [3 /*break*/, 3];
+                        return [4 /*yield*/, RES.loadGroup("preload", 1, loadingView)];
                     case 2:
+                        _a.sent();
+                        this.stage.removeChild(loadingView);
+                        return [3 /*break*/, 4];
+                    case 3:
                         e_1 = _a.sent();
                         console.error(e_1);
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
                 }
             });
         });
@@ -131,112 +138,116 @@ var Main = (function (_super) {
      * Create a game scene
      */
     Main.prototype.createGameScene = function () {
-        if (true) {
-            Main.stageWidth = this.stage.stageWidth;
-            Main.stageHeight = this.stage.stageHeight;
-            var bg = new egret.Shape();
-            bg.graphics.beginFill(0x848484, 1);
-            bg.graphics.drawRect(0, 0, Main.stageWidth, Main.stageHeight);
-            bg.graphics.endFill();
-            this.addChild(bg);
-            /******************游戏窗口***********************/
-            var gameStage = new egret.Shape();
-            gameStage.graphics.beginFill(0x000000, 1);
-            gameStage.graphics.drawRoundRect(20, 20, Main.stageWidth - 40, Main.stageWidth - 40, 40, 40);
-            gameStage.graphics.endFill();
-            this.addChild(gameStage);
-            Main.gameStageContainer = new GameStageContainer(40, 40, Main.stageWidth - 80, Main.stageWidth - 80);
-            this.addChild(Main.gameStageContainer);
-            var player = new Player();
-            player.graphics.beginFill(0x33cc33, 1);
-            player.graphics.drawCircle(0, 0, 20);
-            player.graphics.endFill();
-            player.x = Main.gameStageContainer.width / 2;
-            player.y = Main.gameStageContainer.height - 50;
-            Main.player = player;
-            Main.gameStageContainer.addChild(player);
-            Main.gameStageContainer.swapChildren(player, Main.gameStageContainer.pointPanel);
-            /******************游戏窗口***********************/
-            /******************方向摇杆***********************/
-            var rockerRadius = Main.stageWidth / 6;
-            Main.rockerX = rockerRadius + 40;
-            Main.rockerY = rockerRadius * 7 + 20;
-            var rocker1 = new egret.Shape();
-            rocker1.graphics.beginFill(0x000000, 1);
-            rocker1.graphics.drawCircle(0, 0, rockerRadius);
-            rocker1.graphics.endFill();
-            rocker1.x = Main.rockerX;
-            rocker1.y = Main.rockerY;
-            this.addChild(rocker1);
-            var rocker2_1 = new egret.Shape();
-            var rockerRadius2_1 = rockerRadius - 40;
-            rocker2_1.graphics.beginFill(0xe80000, 1);
-            rocker2_1.graphics.drawCircle(0, 0, rockerRadius2_1);
-            rocker2_1.graphics.endFill();
-            rocker2_1.x = Main.rockerX;
-            rocker2_1.y = Main.rockerY;
-            this.addChild(rocker2_1);
-            rocker2_1.touchEnabled = true;
-            rocker2_1.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (evt) {
-                this.rockerEvent(evt, rockerRadius2_1, rocker2_1);
-            }, this);
-            rocker2_1.addEventListener(egret.TouchEvent.TOUCH_MOVE, function (evt) {
-                this.rockerEvent(evt, rockerRadius2_1, rocker2_1);
-            }, this);
-            rocker2_1.addEventListener(egret.TouchEvent.TOUCH_END, function (evt) {
-                rocker2_1.x = Main.rockerX;
-                rocker2_1.y = Main.rockerY;
-                var b = Math.abs(evt.stageX - Main.rockerX);
-                var a = Math.abs(evt.stageY - Main.rockerY);
-                var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
-                var cos = b / c;
-                Main.player.setOption(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
-                Main.player.removeEventForRun();
-            }, this);
-            rocker2_1.addEventListener(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE, function (evt) {
-                rocker2_1.x = Main.rockerX;
-                rocker2_1.y = Main.rockerY;
-                var b = Math.abs(evt.stageX - Main.rockerX);
-                var a = Math.abs(evt.stageY - Main.rockerY);
-                var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
-                var cos = b / c;
-                Main.player.setOption(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
-                Main.player.removeEventForRun();
-            }, this);
-            /********************方向摇杆**********************/
-            var btnA = new egret.Shape();
-            btnA.graphics.beginFill(0xe80000, 1);
-            btnA.graphics.drawCircle(Main.stageWidth - rockerRadius + 20, rockerRadius * 7 - 20, rockerRadius - 40);
-            btnA.graphics.endFill();
-            btnA.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (evt) {
-                Main.player.shoot();
-            }, this);
-            btnA.addEventListener(egret.TouchEvent.TOUCH_END, function (evt) {
-                Main.player.stopShoot();
-            }, this);
-            this.addChild(btnA);
-            var btnB = new egret.Shape();
-            btnB.graphics.beginFill(0xe80000, 1);
-            btnB.graphics.drawCircle(Main.stageWidth - rockerRadius + 20 - (rockerRadius * 2 - 80), rockerRadius * 7 + rockerRadius * 2 - 120, rockerRadius - 40);
-            btnB.graphics.endFill();
-            this.addChild(btnB);
-            var btnStart = new egret.Shape();
-            btnStart.graphics.beginFill(0xc2c2c2, 1);
-            btnStart.graphics.drawRoundRect(0, 0, 40, rockerRadius, 20, 20);
-            btnStart.graphics.endFill();
-            btnStart.rotation = -30;
-            btnStart.x = Main.stageWidth / 2 - 140;
-            btnStart.y = Main.stageHeight - rockerRadius - 20;
-            this.addChild(btnStart);
-            var btnSelect = new egret.Shape();
-            btnSelect.graphics.beginFill(0xc2c2c2, 1);
-            btnSelect.graphics.drawRoundRect(0, 0, 40, rockerRadius, 20, 20);
-            btnSelect.graphics.endFill();
-            btnSelect.rotation = -30;
-            btnSelect.x = Main.stageWidth / 2 - 60;
-            btnSelect.y = Main.stageHeight - rockerRadius - 20;
-            this.addChild(btnSelect);
-        }
+        Main.stageWidth = this.stage.stageWidth;
+        Main.stageHeight = this.stage.stageHeight;
+        var bg = new egret.Shape();
+        bg.graphics.beginFill(0x848484, 1);
+        bg.graphics.drawRect(0, 0, Main.stageWidth, Main.stageHeight);
+        bg.graphics.endFill();
+        this.addChild(bg);
+        /******************游戏窗口***********************/
+        var gameStage = new egret.Shape();
+        gameStage.graphics.beginFill(0x000000, 1);
+        gameStage.graphics.drawRoundRect(20, 20, Main.stageWidth - 40, Main.stageWidth - 40, 40, 40);
+        gameStage.graphics.endFill();
+        this.addChild(gameStage);
+        Main.gameStageContainer = new GameStageContainer(40, 40, Main.stageWidth - 80, Main.stageWidth - 80);
+        this.addChild(Main.gameStageContainer);
+        var player = new Player();
+        player.graphics.beginFill(0x33cc33, 1);
+        player.graphics.drawCircle(0, 0, 20);
+        player.graphics.endFill();
+        player.x = Main.gameStageContainer.width / 2;
+        player.y = Main.gameStageContainer.height - 50;
+        Main.player = player;
+        Main.gameStageContainer.addChild(player);
+        Main.gameStageContainer.setChildIndex(player, 20);
+        Main.gameStageContainer.swapChildren(player, Main.gameStageContainer.pointPanel);
+        /******************游戏窗口***********************/
+        /******************方向摇杆***********************/
+        var rockerRadius = Main.stageWidth / 6;
+        Main.rockerX = rockerRadius + 40;
+        Main.rockerY = rockerRadius * 7 + 20;
+        var rocker1 = new egret.Shape();
+        rocker1.graphics.beginFill(0x000000, 1);
+        rocker1.graphics.drawCircle(0, 0, rockerRadius);
+        rocker1.graphics.endFill();
+        rocker1.x = Main.rockerX;
+        rocker1.y = Main.rockerY;
+        this.addChild(rocker1);
+        var rocker2 = new egret.Shape();
+        var rockerRadius2 = rockerRadius - 40;
+        rocker2.graphics.beginFill(0xe80000, 1);
+        rocker2.graphics.drawCircle(0, 0, rockerRadius2);
+        rocker2.graphics.endFill();
+        rocker2.x = Main.rockerX;
+        rocker2.y = Main.rockerY;
+        this.addChild(rocker2);
+        rocker2.touchEnabled = true;
+        rocker2.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (evt) {
+            this.rockerEvent(evt, rockerRadius2, rocker2);
+        }, this);
+        rocker2.addEventListener(egret.TouchEvent.TOUCH_MOVE, function (evt) {
+            this.rockerEvent(evt, rockerRadius2, rocker2);
+        }, this);
+        rocker2.addEventListener(egret.TouchEvent.TOUCH_END, function (evt) {
+            rocker2.x = Main.rockerX;
+            rocker2.y = Main.rockerY;
+            var b = Math.abs(evt.stageX - Main.rockerX);
+            var a = Math.abs(evt.stageY - Main.rockerY);
+            var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+            var cos = b / c;
+            Main.player.setOption(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
+            Main.player.removeEventForRun();
+        }, this);
+        rocker2.addEventListener(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE, function (evt) {
+            rocker2.x = Main.rockerX;
+            rocker2.y = Main.rockerY;
+            var b = Math.abs(evt.stageX - Main.rockerX);
+            var a = Math.abs(evt.stageY - Main.rockerY);
+            var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+            var cos = b / c;
+            Main.player.setOption(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
+            Main.player.removeEventForRun();
+        }, this);
+        /********************方向摇杆**********************/
+        var btnA = new egret.Shape();
+        btnA.graphics.beginFill(0xe80000, 1);
+        btnA.graphics.drawCircle(Main.stageWidth - rockerRadius + 20, rockerRadius * 7 - 20, rockerRadius - 40);
+        btnA.graphics.endFill();
+        btnA.touchEnabled = true;
+        btnA.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (evt) {
+            btnA.alpha = 0.5;
+            Main.player.longShoot();
+        }, this);
+        btnA.addEventListener(egret.TouchEvent.TOUCH_END, function (evt) {
+            btnA.alpha = 1;
+            Main.player.stopShoot();
+        }, this);
+        this.addChild(btnA);
+        var btnB = new egret.Shape();
+        btnB.graphics.beginFill(0xe80000, 1);
+        btnB.graphics.drawCircle(Main.stageWidth - rockerRadius + 20 - (rockerRadius * 2 - 80), rockerRadius * 7 + rockerRadius * 2 - 120, rockerRadius - 40);
+        btnB.graphics.endFill();
+        this.addChild(btnB);
+        var btnStart = new egret.Shape();
+        btnStart.graphics.beginFill(0xc2c2c2, 1);
+        btnStart.graphics.drawRoundRect(0, 0, 40, rockerRadius, 20, 20);
+        btnStart.graphics.endFill();
+        btnStart.rotation = -30;
+        btnStart.x = Main.stageWidth / 2 - 140;
+        btnStart.y = Main.stageHeight - rockerRadius - 20;
+        this.addChild(btnStart);
+        var btnSelect = new egret.Shape();
+        btnSelect.graphics.beginFill(0xc2c2c2, 1);
+        btnSelect.graphics.drawRoundRect(0, 0, 40, rockerRadius, 20, 20);
+        btnSelect.graphics.endFill();
+        btnSelect.rotation = -30;
+        btnSelect.x = Main.stageWidth / 2 - 60;
+        btnSelect.y = Main.stageHeight - rockerRadius - 20;
+        this.addChild(btnSelect);
+        var sound = RES.getRes("bgm_mp3");
+        Main.soundChannel = sound.play(0, -1);
     };
     Main.prototype.rockerEvent = function (evt, rockerRadius2, rocker2) {
         var b = Math.abs(evt.stageX - Main.rockerX);

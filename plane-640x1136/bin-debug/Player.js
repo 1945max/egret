@@ -18,7 +18,7 @@ var Player = (function (_super) {
     function Player() {
         var _this = _super.call(this) || this;
         _this.speed = 5;
-        _this.shooting = false;
+        _this.bulletArray = [];
         _this.createBulletArray();
         return _this;
     }
@@ -29,28 +29,24 @@ var Player = (function (_super) {
         this.oX = oX;
         this.oY = oY;
     };
-    Player.prototype.shoot = function () {
-        if (!this.shooting) {
-            var currentBullet = this.bulletArray;
-            while (null != currentBullet) {
-                currentBullet.x = this.x;
-                currentBullet.y = this.y;
-                currentBullet.addEventForRun();
-                Main.gameStageContainer.addChild(currentBullet);
-                currentBullet = currentBullet.nextBullet;
-            }
-            this.shooting = true;
-        }
+    Player.prototype.longShoot = function () {
+        this.shoot();
+        this.shootId = setTimeout(function () {
+            Main.player.longShoot();
+        }, 200);
     };
     Player.prototype.stopShoot = function () {
-        var currentBullet = this.bulletArray;
-        while (null != currentBullet) {
-            currentBullet.x = this.x;
-            currentBullet.y = this.y;
-            currentBullet.removeEventForRun();
-            Main.gameStageContainer.removeChild(currentBullet);
-            currentBullet = currentBullet.nextBullet;
-        }
+        clearTimeout(this.shootId);
+    };
+    Player.prototype.shoot = function () {
+        var currentBullet = this.bulletArray[this.bulletArray.length - 1];
+        this.bulletArray.pop();
+        currentBullet.x = this.x;
+        currentBullet.y = this.y;
+        currentBullet.addEventForRun();
+        this.parent.addChild(currentBullet);
+        this.parent.swapChildren(currentBullet, this);
+        this.parent.swapChildren(this, Main.gameStageContainer.pointPanel);
     };
     Player.prototype.createBulletArray = function () {
         var previousBullet = null;
@@ -59,15 +55,8 @@ var Player = (function (_super) {
             bullet.graphics.beginFill(0xff6699, 1);
             bullet.graphics.drawCircle(0, 0, 5);
             bullet.graphics.endFill();
-            if (9 == i) {
-                bullet.nextBullet = this.bulletArray;
-            }
-            if (null == previousBullet) {
-                this.bulletArray = previousBullet = bullet;
-            }
-            else {
-                previousBullet.nextBullet = bullet;
-            }
+            bullet.name = "bullet_" + i;
+            this.bulletArray.push(bullet);
         }
     };
     /**
@@ -191,7 +180,7 @@ var Bullet = (function (_super) {
     __extends(Bullet, _super);
     function Bullet() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.speed = 3;
+        _this.speed = 10;
         return _this;
     }
     Bullet.prototype.addEventForRun = function () {
@@ -202,9 +191,12 @@ var Bullet = (function (_super) {
     };
     Bullet.prototype.operateBulletRun = function () {
         this.y -= this.speed;
-        if (this.y < 0) {
-            this.y = Main.player.y;
-            this.x = Main.player.x;
+        if (this.y <= this.width) {
+            Main.player.bulletArray.push(this);
+            this.removeEventForRun();
+            if (this.parent) {
+                this.parent.removeChild(this);
+            }
         }
     };
     return Bullet;

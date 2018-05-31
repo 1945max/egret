@@ -6,9 +6,9 @@ class Player extends egret.Shape {
 
     private speed = 5;
 
-    public bulletArray:Bullet;
+    public bulletArray:Array<Bullet> = [];
 
-    private shooting:boolean = false;
+    private shootId:number;
 
     /***角速度与运动计算相关参数***/
 
@@ -37,29 +37,26 @@ class Player extends egret.Shape {
         this.oY = oY;
     }
 
-    public shoot() {
-        if (!this.shooting) {
-            let currentBullet:Bullet = this.bulletArray;
-            while(null != currentBullet) {
-                currentBullet.x = this.x;
-                currentBullet.y = this.y;
-                currentBullet.addEventForRun();
-                Main.gameStageContainer.addChild(currentBullet);
-                currentBullet = currentBullet.nextBullet;
-            }
-            this.shooting = true;
-        }
+    public longShoot() {
+        this.shoot();
+        this.shootId = setTimeout(function() {
+            Main.player.longShoot();
+        }, 200);
     }
 
     public stopShoot() {
-        let currentBullet:Bullet = this.bulletArray;
-        while(null != currentBullet) {
-            currentBullet.x = this.x;
-            currentBullet.y = this.y;
-            currentBullet.removeEventForRun();
-            Main.gameStageContainer.removeChild(currentBullet);
-            currentBullet = currentBullet.nextBullet;
-        }
+        clearTimeout(this.shootId);
+    }
+
+    private shoot() {
+        let currentBullet = this.bulletArray[this.bulletArray.length-1];
+        this.bulletArray.pop();
+        currentBullet.x = this.x;
+        currentBullet.y = this.y;
+        currentBullet.addEventForRun();
+        this.parent.addChild(currentBullet);
+        this.parent.swapChildren(currentBullet, this);
+        this.parent.swapChildren(this, Main.gameStageContainer.pointPanel);
     }
 
     private createBulletArray() {
@@ -69,14 +66,8 @@ class Player extends egret.Shape {
             bullet.graphics.beginFill(0xff6699, 1);
             bullet.graphics.drawCircle(0, 0, 5);
             bullet.graphics.endFill();
-            if (9 == i) {
-                bullet.nextBullet = this.bulletArray;
-            }
-            if (null == previousBullet) {
-                this.bulletArray = previousBullet = bullet;
-            } else {
-                previousBullet.nextBullet = bullet;
-            }
+            bullet.name = "bullet_"+i;
+            this.bulletArray.push(bullet);
         }
     }
 
@@ -196,7 +187,7 @@ class Bullet extends egret.Shape {
 
     public nextBullet:Bullet;
 
-    public speed = 3;
+    public speed = 10;
 
     public addEventForRun() {
         this.addEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
@@ -208,9 +199,12 @@ class Bullet extends egret.Shape {
 
     private operateBulletRun() {
         this.y -= this.speed;
-        if (this.y < 0) {
-            this.y = Main.player.y;
-            this.x = Main.player.x;
+        if (this.y <= this.width) {
+            Main.player.bulletArray.push(this);
+            this.removeEventForRun();
+            if (this.parent) {
+                this.parent.removeChild(this);
+            }
         }
     }
 
