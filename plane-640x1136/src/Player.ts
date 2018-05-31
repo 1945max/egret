@@ -1,20 +1,33 @@
+/**
+ * 自机对象
+ * 
+*/
 class Player extends egret.Shape {
 
-    public speed = 3;
+    private speed = 5;
+
+    public bulletArray:Bullet;
+
+    private shooting:boolean = false;
 
     /***角速度与运动计算相关参数***/
 
-    public cos:number;
+    private cos:number;
 
-    public stageX:number;
+    private stageX:number;
 
-    public stageY:number;
+    private stageY:number;
 
-    public oX:number;
+    private oX:number;
 
-    public oY:number;
+    private oY:number;
 
     /***角速度与运动计算相关参数***/
+
+    public constructor() {
+        super();
+        this.createBulletArray();
+    }
 
     public setOption(cos:number, stageX:number, stageY:number, oX:number, oY:number) {
         this.cos = cos;
@@ -22,6 +35,49 @@ class Player extends egret.Shape {
         this.stageY = stageY;
         this.oX = oX;
         this.oY = oY;
+    }
+
+    public shoot() {
+        if (!this.shooting) {
+            let currentBullet:Bullet = this.bulletArray;
+            while(null != currentBullet) {
+                currentBullet.x = this.x;
+                currentBullet.y = this.y;
+                currentBullet.addEventForRun();
+                Main.gameStageContainer.addChild(currentBullet);
+                currentBullet = currentBullet.nextBullet;
+            }
+            this.shooting = true;
+        }
+    }
+
+    public stopShoot() {
+        let currentBullet:Bullet = this.bulletArray;
+        while(null != currentBullet) {
+            currentBullet.x = this.x;
+            currentBullet.y = this.y;
+            currentBullet.removeEventForRun();
+            Main.gameStageContainer.removeChild(currentBullet);
+            currentBullet = currentBullet.nextBullet;
+        }
+    }
+
+    private createBulletArray() {
+        let previousBullet:Bullet = null;
+        for (var i = 0;i < 10;i++) {
+            let bullet = new Bullet();
+            bullet.graphics.beginFill(0xff6699, 1);
+            bullet.graphics.drawCircle(0, 0, 5);
+            bullet.graphics.endFill();
+            if (9 == i) {
+                bullet.nextBullet = this.bulletArray;
+            }
+            if (null == previousBullet) {
+                this.bulletArray = previousBullet = bullet;
+            } else {
+                previousBullet.nextBullet = bullet;
+            }
+        }
     }
 
     /**
@@ -56,18 +112,18 @@ class Player extends egret.Shape {
      * 
     */
     public addEventForRun() {
-        if (!Main.player.hasEventListener(egret.Event.ENTER_FRAME)) {
-            Main.player.addEventListener(egret.Event.ENTER_FRAME, this.operatePlayerRun, Main.player);
+        if (!this.hasEventListener(egret.Event.ENTER_FRAME)) {
+            this.addEventListener(egret.Event.ENTER_FRAME, this.operatePlayerRun, this);
         }
-    };
+    }
 
     /**
      * 移除对帧事件监听
      * 
     */
     public removeEventForRun() {
-        Main.player.removeEventListener(egret.Event.ENTER_FRAME, this.operatePlayerRun, Main.player);
-    };
+        this.removeEventListener(egret.Event.ENTER_FRAME, this.operatePlayerRun, this);
+    }
     /* 
      * 计算自机运行方向与角速度，并控制自机移动
      */
@@ -75,40 +131,40 @@ class Player extends egret.Shape {
         switch(this.computeQuadrant()) {
             case 1:
                 //第一象限
-                Main.player.x = Main.player.x - this.speed*this.cos;
-                Main.player.y = Main.player.y - Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*this.cos, 2));
+                this.x = this.x - this.speed*this.cos;
+                this.y = this.y - Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*this.cos, 2));
                 this.checkBorder(this.cos);
             ;break;
             case 2:
                 //第二象限
-                Main.player.x = Main.player.x + this.speed*this.cos;
-                Main.player.y = Main.player.y - Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*this.cos, 2));
+                this.x = this.x + this.speed*this.cos;
+                this.y = this.y - Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*this.cos, 2));
                 this.checkBorder(this.cos);
             ;break;
             case 3:
                 //第三象限
-                Main.player.x = Main.player.x + this.speed*this.cos;
-                Main.player.y = Main.player.y + Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*this.cos, 2));
+                this.x = this.x + this.speed*this.cos;
+                this.y = this.y + Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*this.cos, 2));
                 this.checkBorder(this.cos);
             ;break;
             case 4:
                 //第四象限
-                Main.player.x = Main.player.x - this.speed*this.cos;
-                Main.player.y = Main.player.y + Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*this.cos, 2));
+                this.x = this.x - this.speed*this.cos;
+                this.y = this.y + Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*this.cos, 2));
                 this.checkBorder(this.cos);
             ;break;
             default:
                 //y轴无速度
                 if ((this.stageX - this.oX)>0) {
-                    Main.player.x+=this.speed
+                    this.x+=this.speed
                 } else if ((this.stageX - this.oX)<0) {
-                    Main.player.x-=this.speed
+                    this.x-=this.speed
                 }
                 //x轴无速度
                 if ((this.stageY - this.oY)>0) {
-                    Main.player.y+=this.speed
+                    this.y+=this.speed
                 } else if ((this.stageY - this.oY)<0) {
-                    Main.player.y-=this.speed
+                    this.y-=this.speed
                 }
                 this.checkBorder(0);
             ;
@@ -130,4 +186,32 @@ class Player extends egret.Shape {
         }
         return 0;
     }
+}
+
+/**
+ * 自机普通弹药
+ * 
+*/
+class Bullet extends egret.Shape {
+
+    public nextBullet:Bullet;
+
+    public speed = 3;
+
+    public addEventForRun() {
+        this.addEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
+    }
+
+    public removeEventForRun() {
+        this.removeEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
+    }
+
+    private operateBulletRun() {
+        this.y -= this.speed;
+        if (this.y < 0) {
+            this.y = Main.player.y;
+            this.x = Main.player.x;
+        }
+    }
+
 }

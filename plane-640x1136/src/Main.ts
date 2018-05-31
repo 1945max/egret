@@ -99,7 +99,6 @@ class Main extends egret.DisplayObjectContainer {
      * Create a game scene
      */
     private createGameScene() {
-
         Main.stageWidth = this.stage.stageWidth;
         Main.stageHeight = this.stage.stageHeight;
 
@@ -188,6 +187,12 @@ class Main extends egret.DisplayObjectContainer {
         btnA.graphics.beginFill(0xe80000, 1);
         btnA.graphics.drawCircle(Main.stageWidth-rockerRadius+20, rockerRadius*7-20, rockerRadius-40);
         btnA.graphics.endFill();
+        btnA.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function(evt:egret.TouchEvent):void {
+            Main.player.shoot()
+        }, this);
+        btnA.addEventListener(egret.TouchEvent.TOUCH_END, function(evt:egret.TouchEvent):void {
+            Main.player.stopShoot();
+        }, this);
         this.addChild(btnA);
 
         let btnB = new egret.Shape();
@@ -213,7 +218,6 @@ class Main extends egret.DisplayObjectContainer {
         btnSelect.x = Main.stageWidth/2-60;
         btnSelect.y = Main.stageHeight-rockerRadius-20;
         this.addChild(btnSelect);
-
     }
 
     private rockerEvent(evt:egret.TouchEvent, rockerRadius2:number, rocker2:egret.Shape) {
