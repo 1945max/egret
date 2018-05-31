@@ -12,72 +12,125 @@ var Player = (function (_super) {
     __extends(Player, _super);
     function Player() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.speed = 1;
-        _this.quadrant = 1;
+        _this.speed = 3;
         return _this;
     }
+    /***角速度与运动计算相关参数***/
+    Player.prototype.setOption = function (cos, stageX, stageY, oX, oY) {
+        this.cos = cos;
+        this.stageX = stageX;
+        this.stageY = stageY;
+        this.oX = oX;
+        this.oY = oY;
+    };
+    /**
+     * 自机边界碰撞检测
+     *
+    */
+    Player.prototype.checkBorder = function (cos) {
+        var aSpeed;
+        var bSpeed;
+        if (cos > 0) {
+            bSpeed = this.speed * cos;
+            aSpeed = Math.sqrt(Math.pow(this.speed, 2) - Math.pow(bSpeed, 2));
+        }
+        else {
+            bSpeed = aSpeed = this.speed;
+        }
+        if (this.x >= Main.gameStageContainer.width - this.width) {
+            this.x -= bSpeed;
+        }
+        if (this.x < this.width) {
+            this.x += bSpeed;
+        }
+        if (this.y >= Main.gameStageContainer.height - this.height) {
+            this.y -= aSpeed;
+        }
+        if (this.y < this.height) {
+            this.y += aSpeed;
+        }
+    };
+    /**
+     * 添加帧事件监听，使本对象按帧计算运动
+     *
+    */
+    Player.prototype.addEventForRun = function () {
+        if (!Main.player.hasEventListener(egret.Event.ENTER_FRAME)) {
+            Main.player.addEventListener(egret.Event.ENTER_FRAME, this.operatePlayerRun, Main.player);
+        }
+    };
+    ;
+    /**
+     * 移除对帧事件监听
+     *
+    */
+    Player.prototype.removeEventForRun = function () {
+        Main.player.removeEventListener(egret.Event.ENTER_FRAME, this.operatePlayerRun, Main.player);
+    };
+    ;
     /*
      * 计算自机运行方向与角速度，并控制自机移动
      */
-    Player.prototype.operatePlayerRun = function (cos, currX, currY, oX, oY) {
-        switch (this.computeQuadrant(currX, currY, oX, oY)) {
+    Player.prototype.operatePlayerRun = function () {
+        switch (this.computeQuadrant()) {
             case 1:
                 //第一象限
-                console.log("Quadrant:" + 1);
-                Main.player.x = Main.player.x - this.speed * cos;
-                Main.player.y = Main.player.y - Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * cos, 2));
+                Main.player.x = Main.player.x - this.speed * this.cos;
+                Main.player.y = Main.player.y - Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
+                this.checkBorder(this.cos);
                 ;
                 break;
             case 2:
                 //第二象限
-                console.log("Quadrant:" + 2);
-                Main.player.x = Main.player.x + this.speed * cos;
-                Main.player.y = Main.player.y - Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * cos, 2));
+                Main.player.x = Main.player.x + this.speed * this.cos;
+                Main.player.y = Main.player.y - Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
+                this.checkBorder(this.cos);
                 ;
                 break;
             case 3:
                 //第三象限
-                console.log("Quadrant:" + 3);
-                Main.player.x = Main.player.x + this.speed * cos;
-                Main.player.y = Main.player.y + Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * cos, 2));
+                Main.player.x = Main.player.x + this.speed * this.cos;
+                Main.player.y = Main.player.y + Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
+                this.checkBorder(this.cos);
                 ;
                 break;
             case 4:
                 //第四象限
-                console.log("Quadrant:" + 4);
-                Main.player.x = Main.player.x - this.speed * cos;
-                Main.player.y = Main.player.y + Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * cos, 2));
+                Main.player.x = Main.player.x - this.speed * this.cos;
+                Main.player.y = Main.player.y + Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
+                this.checkBorder(this.cos);
                 ;
                 break;
             default:
                 //y轴无速度
-                if ((currX - oX) > 0) {
+                if ((this.stageX - this.oX) > 0) {
                     Main.player.x += this.speed;
                 }
-                else if ((currX - oX) < 0) {
+                else if ((this.stageX - this.oX) < 0) {
                     Main.player.x -= this.speed;
                 }
                 //x轴无速度
-                if ((currY - oY) > 0) {
+                if ((this.stageY - this.oY) > 0) {
                     Main.player.y += this.speed;
                 }
-                else if ((currY - oY) < 0) {
+                else if ((this.stageY - this.oY) < 0) {
                     Main.player.y -= this.speed;
                 }
+                this.checkBorder(0);
                 ;
         }
     };
-    Player.prototype.computeQuadrant = function (currX, currY, oX, oY) {
-        if ((currX - oX) < 0 && (currY - oY) < 0) {
+    Player.prototype.computeQuadrant = function () {
+        if ((this.stageX - this.oX) < 0 && (this.stageY - this.oY) < 0) {
             return 1;
         }
-        if ((currX - oX) > 0 && (currY - oY) < 0) {
+        if ((this.stageX - this.oX) > 0 && (this.stageY - this.oY) < 0) {
             return 2;
         }
-        if ((currX - oX) > 0 && (currY - oY) > 0) {
+        if ((this.stageX - this.oX) > 0 && (this.stageY - this.oY) > 0) {
             return 3;
         }
-        if ((currX - oX) < 0 && (currY - oY) > 0) {
+        if ((this.stageX - this.oX) < 0 && (this.stageY - this.oY) > 0) {
             return 4;
         }
         return 0;

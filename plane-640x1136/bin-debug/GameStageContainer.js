@@ -30,10 +30,12 @@ var GameStageContainer = (function (_super) {
         screen.graphics.drawRect(0, 0, width, height);
         screen.graphics.endFill();
         this.addChild(screen);
+        this.setChildIndex(screen, 1);
     };
     GameStageContainer.prototype.createPointPanel = function (width, height) {
-        var pointPanel = new PointPanel(0, 0, width, height);
-        this.addChild(pointPanel);
+        this.pointPanel = new PointPanel(0, 0, width, height);
+        this.addChild(this.pointPanel);
+        this.setChildIndex(this.pointPanel, 100);
     };
     return GameStageContainer;
 }(egret.DisplayObjectContainer));
@@ -68,6 +70,7 @@ var PointPanel = (function (_super) {
         point.x = 10;
         point.y = 10;
         this.addChild(point);
+        this.setChildIndex(point, 3);
         var time = new egret.TextField();
         time.text = this.timeStr + "";
         time.size = 40;
@@ -75,6 +78,7 @@ var PointPanel = (function (_super) {
         time.x = this.width - 10 - time.width;
         time.y = 10;
         this.addChild(time);
+        this.setChildIndex(time, 3);
         for (var i = 0; i < this.HP; i++) {
             var hrBox = new egret.Shape();
             hrBox.graphics.beginFill(0xff0000, 1);
@@ -82,6 +86,7 @@ var PointPanel = (function (_super) {
             hrBox.graphics.endFill();
             hrBox.x += 40 * i + 10 * i;
             this.addChild(hrBox);
+            this.setChildIndex(hrBox, 3);
             this.HPArray.push(hrBox);
             var boomBox = new egret.Shape();
             boomBox.graphics.beginFill(0x6666ff, 1);
@@ -89,6 +94,7 @@ var PointPanel = (function (_super) {
             boomBox.graphics.endFill();
             boomBox.x += 40 * i + 10 * i;
             this.addChild(boomBox);
+            this.setChildIndex(boomBox, 3);
             this.boomArray.push(boomBox);
         }
     };

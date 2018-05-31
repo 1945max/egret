@@ -148,10 +148,13 @@ var Main = (function (_super) {
         this.addChild(Main.gameStageContainer);
         var player = new Player();
         player.graphics.beginFill(0x33cc33, 1);
-        player.graphics.drawCircle(Main.gameStageContainer.width / 2, Main.gameStageContainer.height - 50, 20);
+        player.graphics.drawCircle(0, 0, 20);
         player.graphics.endFill();
+        player.x = Main.gameStageContainer.width / 2;
+        player.y = Main.gameStageContainer.height - 50;
         Main.player = player;
         Main.gameStageContainer.addChild(player);
+        Main.gameStageContainer.swapChildren(player, Main.gameStageContainer.pointPanel);
         /******************游戏窗口***********************/
         /******************方向摇杆***********************/
         var rockerRadius = Main.stageWidth / 6;
@@ -174,61 +177,30 @@ var Main = (function (_super) {
         this.addChild(rocker2);
         rocker2.touchEnabled = true;
         rocker2.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (evt) {
-            var b = evt.stageX - Main.rockerX;
-            var a = evt.stageY - Main.rockerY;
-            var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
-            var cos = b / c;
-            if (rockerRadius2 < c) {
-                var bL = rockerRadius2 * cos;
-                var aL = Math.sqrt(Math.pow(rockerRadius2, 2) - Math.pow(bL, 2));
-                rocker2.x = Main.rockerX + bL;
-                if ((evt.stageY - Main.rockerY) > 0) {
-                    rocker2.y = Main.rockerY + aL;
-                }
-                else if ((evt.stageY - Main.rockerY) < 0) {
-                    rocker2.y = Main.rockerY - aL;
-                }
-                else {
-                    rocker2.y = Main.rockerY;
-                }
-            }
-            else {
-                rocker2.x = evt.stageX;
-                rocker2.y = evt.stageY;
-            }
-            Main.player.operatePlayerRun(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
+            this.rockerEvent(evt, rockerRadius2, rocker2);
         }, this);
         rocker2.addEventListener(egret.TouchEvent.TOUCH_MOVE, function (evt) {
-            var b = evt.stageX - Main.rockerX;
-            var a = evt.stageY - Main.rockerY;
-            var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
-            var cos = b / c;
-            if (rockerRadius2 < c) {
-                var bL = rockerRadius2 * cos;
-                var aL = Math.sqrt(Math.pow(rockerRadius2, 2) - Math.pow(bL, 2));
-                rocker2.x = Main.rockerX + bL;
-                if ((evt.stageY - Main.rockerY) > 0) {
-                    rocker2.y = Main.rockerY + aL;
-                }
-                else if ((evt.stageY - Main.rockerY) < 0) {
-                    rocker2.y = Main.rockerY - aL;
-                }
-                else {
-                    rocker2.y = Main.rockerY;
-                }
-            }
-            else {
-                rocker2.x = evt.stageX;
-                rocker2.y = evt.stageY;
-            }
+            this.rockerEvent(evt, rockerRadius2, rocker2);
         }, this);
         rocker2.addEventListener(egret.TouchEvent.TOUCH_END, function (evt) {
             rocker2.x = Main.rockerX;
             rocker2.y = Main.rockerY;
+            var b = Math.abs(evt.stageX - Main.rockerX);
+            var a = Math.abs(evt.stageY - Main.rockerY);
+            var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+            var cos = b / c;
+            Main.player.setOption(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
+            Main.player.removeEventForRun();
         }, this);
         rocker2.addEventListener(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE, function (evt) {
             rocker2.x = Main.rockerX;
             rocker2.y = Main.rockerY;
+            var b = Math.abs(evt.stageX - Main.rockerX);
+            var a = Math.abs(evt.stageY - Main.rockerY);
+            var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+            var cos = b / c;
+            Main.player.setOption(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
+            Main.player.removeEventForRun();
         }, this);
         /********************方向摇杆**********************/
         var btnA = new egret.Shape();
@@ -258,11 +230,39 @@ var Main = (function (_super) {
         btnSelect.y = Main.stageHeight - rockerRadius - 20;
         this.addChild(btnSelect);
     };
-    Main.prototype.createPalyer = function (x, y, width, height) {
-        var player = new egret.Shape();
-        player.graphics.beginFill(0x009933, 1);
-        player.graphics.drawRect(x, y, width, height);
-        return player;
+    Main.prototype.rockerEvent = function (evt, rockerRadius2, rocker2) {
+        var b = Math.abs(evt.stageX - Main.rockerX);
+        var a = Math.abs(evt.stageY - Main.rockerY);
+        var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+        var cos = b / c;
+        if (rockerRadius2 < c) {
+            var bL = rockerRadius2 * cos;
+            var aL = Math.sqrt(Math.pow(rockerRadius2, 2) - Math.pow(bL, 2));
+            if ((evt.stageX - Main.rockerX) > 0) {
+                rocker2.x = Main.rockerX + bL;
+            }
+            else if ((evt.stageX - Main.rockerX) < 0) {
+                rocker2.x = Main.rockerX - bL;
+            }
+            else {
+                rocker2.x = Main.rockerX;
+            }
+            if ((evt.stageY - Main.rockerY) > 0) {
+                rocker2.y = Main.rockerY + aL;
+            }
+            else if ((evt.stageY - Main.rockerY) < 0) {
+                rocker2.y = Main.rockerY - aL;
+            }
+            else {
+                rocker2.y = Main.rockerY;
+            }
+        }
+        else {
+            rocker2.x = evt.stageX;
+            rocker2.y = evt.stageY;
+        }
+        Main.player.setOption(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
+        Main.player.addEventForRun();
     };
     Main.playerSpeed = 1;
     return Main;

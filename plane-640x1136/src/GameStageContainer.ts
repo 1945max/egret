@@ -4,6 +4,8 @@
 */
 class GameStageContainer extends egret.DisplayObjectContainer {
 
+    public pointPanel:PointPanel;
+
     public constructor(x:number, y:number, width:number, height:number) {
         super();
         this.x = x;
@@ -20,11 +22,13 @@ class GameStageContainer extends egret.DisplayObjectContainer {
         screen.graphics.drawRect(0, 0, width, height);
         screen.graphics.endFill();
         this.addChild(screen);
+        this.setChildIndex(screen, 1);
     }
 
     private createPointPanel(width:number, height:number) {
-        let pointPanel = new PointPanel(0, 0, width, height);
-        this.addChild(pointPanel);
+        this.pointPanel = new PointPanel(0, 0, width, height);
+        this.addChild(this.pointPanel);
+        this.setChildIndex(this.pointPanel, 100);
     }
 
 }
@@ -66,6 +70,7 @@ class PointPanel extends egret.DisplayObjectContainer {
         point.x = 10;
         point.y = 10;
         this.addChild(point);
+        this.setChildIndex(point, 3);
         let time = new  egret.TextField();
         time.text = this.timeStr + "";
         time.size = 40;
@@ -73,6 +78,7 @@ class PointPanel extends egret.DisplayObjectContainer {
         time.x = this.width - 10 - time.width;
         time.y = 10;
         this.addChild(time);
+        this.setChildIndex(time, 3);
         for (var i = 0;i < this.HP;i++) {
             let hrBox = new egret.Shape();
             hrBox.graphics.beginFill(0xff0000, 1);
@@ -80,6 +86,7 @@ class PointPanel extends egret.DisplayObjectContainer {
             hrBox.graphics.endFill();
             hrBox.x += 40*i + 10*i;
             this.addChild(hrBox);
+            this.setChildIndex(hrBox, 3);
             this.HPArray.push(hrBox);
 
             let boomBox = new egret.Shape();
@@ -88,6 +95,7 @@ class PointPanel extends egret.DisplayObjectContainer {
             boomBox.graphics.endFill();
             boomBox.x += 40*i + 10*i;
             this.addChild(boomBox);
+            this.setChildIndex(boomBox, 3);
             this.boomArray.push(boomBox);
         }
     }
