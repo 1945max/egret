@@ -88,11 +88,11 @@ class Main extends egret.DisplayObjectContainer {
     public static rockerX:number;
     public static rockerY:number;
 
-    public static player:egret.Shape;
+    public static player:Player;
 
     public static playerSpeed = 1;
 
-    public static gameStageContainer:egret.DisplayObjectContainer;
+    public static gameStageContainer:GameStageContainer;
 
     /**
      * 创建游戏场景
@@ -103,13 +103,13 @@ class Main extends egret.DisplayObjectContainer {
         Main.stageWidth = this.stage.stageWidth;
         Main.stageHeight = this.stage.stageHeight;
 
-        /******************游戏窗口***********************/
-
         let bg = new egret.Shape();
         bg.graphics.beginFill(0x848484, 1);
         bg.graphics.drawRect(0, 0, Main.stageWidth, Main.stageHeight);
         bg.graphics.endFill();
         this.addChild(bg);
+
+        /******************游戏窗口***********************/
 
         let gameStage = new egret.Shape();
         gameStage.graphics.beginFill(0x000000, 1);
@@ -120,6 +120,12 @@ class Main extends egret.DisplayObjectContainer {
         Main.gameStageContainer = new GameStageContainer(40, 40, Main.stageWidth-80, Main.stageWidth-80);
         this.addChild(Main.gameStageContainer);
 
+        let player = new Player();
+        player.graphics.beginFill(0x33cc33, 1);
+        player.graphics.drawCircle(Main.gameStageContainer.width/2, Main.gameStageContainer.height-50, 20);
+        player.graphics.endFill();
+        Main.player = player;
+        Main.gameStageContainer.addChild(player);
 
         /******************游戏窗口***********************/
 
@@ -173,6 +179,7 @@ class Main extends egret.DisplayObjectContainer {
             let a = evt.stageY - Main.rockerY;
             let c = Math.sqrt(Math.pow(a, 2) + Math.pow(b,2));
             let cos = b/c;
+           Main.player.operatePlayerRun(cos,1);
             if (rockerRadius2 < c) {
                 let bL=rockerRadius2*cos;
                 let aL=Math.sqrt(Math.pow(rockerRadius2, 2) - Math.pow(bL, 2));

@@ -133,12 +133,12 @@ var Main = (function (_super) {
     Main.prototype.createGameScene = function () {
         Main.stageWidth = this.stage.stageWidth;
         Main.stageHeight = this.stage.stageHeight;
-        /******************游戏窗口***********************/
         var bg = new egret.Shape();
         bg.graphics.beginFill(0x848484, 1);
         bg.graphics.drawRect(0, 0, Main.stageWidth, Main.stageHeight);
         bg.graphics.endFill();
         this.addChild(bg);
+        /******************游戏窗口***********************/
         var gameStage = new egret.Shape();
         gameStage.graphics.beginFill(0x000000, 1);
         gameStage.graphics.drawRoundRect(20, 20, Main.stageWidth - 40, Main.stageWidth - 40, 40, 40);
@@ -146,6 +146,12 @@ var Main = (function (_super) {
         this.addChild(gameStage);
         Main.gameStageContainer = new GameStageContainer(40, 40, Main.stageWidth - 80, Main.stageWidth - 80);
         this.addChild(Main.gameStageContainer);
+        var player = new Player();
+        player.graphics.beginFill(0x33cc33, 1);
+        player.graphics.drawCircle(Main.gameStageContainer.width / 2, Main.gameStageContainer.height - 50, 20);
+        player.graphics.endFill();
+        Main.player = player;
+        Main.gameStageContainer.addChild(player);
         /******************游戏窗口***********************/
         /******************方向摇杆***********************/
         var rockerRadius = Main.stageWidth / 6;
@@ -196,6 +202,7 @@ var Main = (function (_super) {
             var a = evt.stageY - Main.rockerY;
             var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
             var cos = b / c;
+            Main.player.operatePlayerRun(cos, 1);
             if (rockerRadius2 < c) {
                 var bL = rockerRadius2 * cos;
                 var aL = Math.sqrt(Math.pow(rockerRadius2, 2) - Math.pow(bL, 2));
