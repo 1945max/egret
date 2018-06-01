@@ -256,6 +256,10 @@ var Main = (function (_super) {
         this.addChild(btnSelect);
         var sound = RES.getRes("bgm_mp3");
         Main.soundChannel = sound.play(0, -1);
+        var enemyMoveManager = new EnemyMoveManager();
+        setTimeout(function () {
+            enemyMoveManager.launch();
+        }, 1000);
     };
     Main.prototype.rockerEvent = function (evt, rockerRadius2, rocker2) {
         var b = Math.abs(evt.stageX - Main.rockerX);

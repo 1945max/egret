@@ -112,9 +112,29 @@ class PointPanel extends egret.DisplayObjectContainer {
 
     public addBoom() {
        this.boom++;
-       for (var boom of this.boomArray) {
-            if (!boom.parent) {
-                boom.parent.addChild(boom);
+       for (var i = this.boomArray.length-1;i>=0;i--) {
+            if (!this.boomArray[i].parent) {
+                this.boomArray[i].parent.addChild(this.boomArray[i]);
+                return;
+            }
+       }
+    }
+
+    public removeHP() {
+       this.HP--;
+       for (var hp of this.HPArray) {
+            if (hp.parent) {
+                hp.parent.removeChild(hp);
+                return;
+            }
+       }
+    }
+
+    public addHP() {
+       this.HP++;
+       for (var i = this.HPArray.length-1;i>=0;i--) {
+            if (!this.HPArray[i].parent) {
+                this.HPArray[i].parent.addChild(this.HPArray[i]);
                 return;
             }
        }

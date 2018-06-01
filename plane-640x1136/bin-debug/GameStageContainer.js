@@ -110,10 +110,28 @@ var PointPanel = (function (_super) {
     };
     PointPanel.prototype.addBoom = function () {
         this.boom++;
-        for (var _i = 0, _a = this.boomArray; _i < _a.length; _i++) {
-            var boom = _a[_i];
-            if (!boom.parent) {
-                boom.parent.addChild(boom);
+        for (var i = this.boomArray.length - 1; i >= 0; i--) {
+            if (!this.boomArray[i].parent) {
+                this.boomArray[i].parent.addChild(this.boomArray[i]);
+                return;
+            }
+        }
+    };
+    PointPanel.prototype.removeHP = function () {
+        this.HP--;
+        for (var _i = 0, _a = this.HPArray; _i < _a.length; _i++) {
+            var hp = _a[_i];
+            if (hp.parent) {
+                hp.parent.removeChild(hp);
+                return;
+            }
+        }
+    };
+    PointPanel.prototype.addHP = function () {
+        this.HP++;
+        for (var i = this.HPArray.length - 1; i >= 0; i--) {
+            if (!this.HPArray[i].parent) {
+                this.HPArray[i].parent.addChild(this.HPArray[i]);
                 return;
             }
         }

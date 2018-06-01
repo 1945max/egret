@@ -52,8 +52,7 @@ class Player extends egret.Shape {
     }
 
     private shoot() {
-        let currentBullet = this.bulletArray[this.bulletArray.length-1];
-        this.bulletArray.pop();
+        let currentBullet = this.bulletArray.pop();
         currentBullet.x = this.x;
         currentBullet.y = this.y;
         currentBullet.addEventForRun();
@@ -91,10 +90,20 @@ class Player extends egret.Shape {
     }
 
     private createBoomArray() {
-        let cos:Array<Array<number>> = [[Math.sqrt(3)/2, 1], [1/2, 1], [Math.sqrt(3)/2, 2], [1/2, 2], [Math.sqrt(3)/2, 3], [1/2, 3], [Math.sqrt(3)/2, 4], [1/2, 4]];
+        let cos:Array<Array<number>> = [];
+
+        for (var i = 1;i < 5;i++) {
+            for (var j = 0;j < 9;j++) {
+                let currentCos:Array<number> = [];
+                currentCos.push(Math.cos(10*j));
+                currentCos.push(i);
+                cos.push(currentCos);
+            }
+        }
+        
         for (var i = 0;i < 3;i++) {
             let boomArray:Array<Boom> = [];
-            for (var j = 0;j < 8;j++) {
+            for (var j = 0;j < cos.length;j++) {
                 let boom = new Boom(cos[j][0], cos[j][1]);
                 boom.graphics.beginFill(0xcc0099, 1);
                 boom.graphics.drawCircle(0, 0, 5);
@@ -291,14 +300,14 @@ class Boom extends egret.Shape {
     }
 
     public addEventForRun() {
-        this.addEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
+        this.addEventListener(egret.Event.ENTER_FRAME, this.operateBoomRun, this);
     }
 
     public removeEventForRun() {
-        this.removeEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
+        this.removeEventListener(egret.Event.ENTER_FRAME, this.operateBoomRun, this);
     }
 
-    private operateBulletRun() {
+    private operateBoomRun() {
         this.y += this.speedY;
         this.x += this.speedX;
         if (this.y <= 0||this.y >= this.parent.height||this.x <= 0||this.x >= this.parent.height) {

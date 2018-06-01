@@ -235,7 +235,11 @@ class Main extends egret.DisplayObjectContainer {
         this.addChild(btnSelect);
         let sound:egret.Sound = RES.getRes("bgm_mp3");
         Main.soundChannel = sound.play(0, -1);
-        
+
+        let enemyMoveManager = new EnemyMoveManager();
+        setTimeout(function() {
+            enemyMoveManager.launch();
+        }, 1000);
     }
 
     private rockerEvent(evt:egret.TouchEvent, rockerRadius2:number, rocker2:egret.Shape) {
