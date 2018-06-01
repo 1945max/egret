@@ -206,6 +206,14 @@ class Main extends egret.DisplayObjectContainer {
         btnB.graphics.beginFill(0xe80000, 1);
         btnB.graphics.drawCircle(Main.stageWidth-rockerRadius+20-(rockerRadius*2-80), rockerRadius*7+rockerRadius*2-120, rockerRadius-40);
         btnB.graphics.endFill();
+        btnB.touchEnabled = true;
+        btnB.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function(evt:egret.TouchEvent):void {
+            btnB.alpha = 0.5;
+            Main.player.boom();
+        }, this);
+        btnB.addEventListener(egret.TouchEvent.TOUCH_END, function(evt:egret.TouchEvent):void {
+            btnB.alpha = 1;
+        }, this);
         this.addChild(btnB);
 
         let btnStart = new egret.Shape();

@@ -98,6 +98,26 @@ var PointPanel = (function (_super) {
             this.boomArray.push(boomBox);
         }
     };
+    PointPanel.prototype.removeBoom = function () {
+        this.boom--;
+        for (var _i = 0, _a = this.boomArray; _i < _a.length; _i++) {
+            var boom = _a[_i];
+            if (boom.parent) {
+                boom.parent.removeChild(boom);
+                return;
+            }
+        }
+    };
+    PointPanel.prototype.addBoom = function () {
+        this.boom++;
+        for (var _i = 0, _a = this.boomArray; _i < _a.length; _i++) {
+            var boom = _a[_i];
+            if (!boom.parent) {
+                boom.parent.addChild(boom);
+                return;
+            }
+        }
+    };
     return PointPanel;
 }(egret.DisplayObjectContainer));
 __reflect(PointPanel.prototype, "PointPanel");

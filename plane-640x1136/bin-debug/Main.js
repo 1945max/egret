@@ -229,6 +229,14 @@ var Main = (function (_super) {
         btnB.graphics.beginFill(0xe80000, 1);
         btnB.graphics.drawCircle(Main.stageWidth - rockerRadius + 20 - (rockerRadius * 2 - 80), rockerRadius * 7 + rockerRadius * 2 - 120, rockerRadius - 40);
         btnB.graphics.endFill();
+        btnB.touchEnabled = true;
+        btnB.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (evt) {
+            btnB.alpha = 0.5;
+            Main.player.boom();
+        }, this);
+        btnB.addEventListener(egret.TouchEvent.TOUCH_END, function (evt) {
+            btnB.alpha = 1;
+        }, this);
         this.addChild(btnB);
         var btnStart = new egret.Shape();
         btnStart.graphics.beginFill(0xc2c2c2, 1);

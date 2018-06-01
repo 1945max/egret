@@ -10,6 +10,8 @@ class Player extends egret.Shape {
 
     private shootId:number;
 
+    public boomBox:Array<Array<Boom>> = [];
+
     /***角速度与运动计算相关参数***/
 
     private cos:number;
@@ -27,6 +29,7 @@ class Player extends egret.Shape {
     public constructor() {
         super();
         this.createBulletArray();
+        this.createBoomArray();
     }
 
     public setOption(cos:number, stageX:number, stageY:number, oX:number, oY:number) {
@@ -60,7 +63,6 @@ class Player extends egret.Shape {
     }
 
     private createBulletArray() {
-        let previousBullet:Bullet = null;
         for (var i = 0;i < 10;i++) {
             let bullet = new Bullet();
             bullet.graphics.beginFill(0xff6699, 1);
@@ -68,6 +70,39 @@ class Player extends egret.Shape {
             bullet.graphics.endFill();
             bullet.name = "bullet_"+i;
             this.bulletArray.push(bullet);
+        }
+    }
+
+    public boom() {
+        if (Main.gameStageContainer.pointPanel.boom >= 1) {
+            Main.gameStageContainer.pointPanel.removeBoom();
+            let currentBoomArray = this.boomBox[2];
+            this.boomBox[2] = this.boomBox[1];
+            this.boomBox[1] = this.boomBox[0];
+            this.boomBox[0] = currentBoomArray;
+            for (var boom of currentBoomArray) {
+                boom.x = this.x;
+                boom.y = this.y;
+                boom.addEventForRun();
+                this.parent.addChild(boom);
+                this.parent.swapChildren(boom, this);
+            }
+        }
+    }
+
+    private createBoomArray() {
+        let cos:Array<Array<number>> = [[Math.sqrt(3)/2, 1], [1/2, 1], [Math.sqrt(3)/2, 2], [1/2, 2], [Math.sqrt(3)/2, 3], [1/2, 3], [Math.sqrt(3)/2, 4], [1/2, 4]];
+        for (var i = 0;i < 3;i++) {
+            let boomArray:Array<Boom> = [];
+            for (var j = 0;j < 8;j++) {
+                let boom = new Boom(cos[j][0], cos[j][1]);
+                boom.graphics.beginFill(0xcc0099, 1);
+                boom.graphics.drawCircle(0, 0, 5);
+                boom.graphics.endFill();
+                boom.name = "boom_"+i+"_"+j;
+                boomArray.push(boom);
+            }
+            this.boomBox.push(boomArray);
         }
     }
 
@@ -205,6 +240,70 @@ class Bullet extends egret.Shape {
             if (this.parent) {
                 this.parent.removeChild(this);
             }
+        }
+    }
+
+}
+
+class Boom extends egret.Shape {
+
+    private speed = 10;
+
+    private speedX = 0;
+
+    private speedY = 0;
+
+    private quadrant = 1;
+
+    private cos = 0;
+
+    public constructor(cos:number, quadrant:number) {
+        super();
+        this.cos = cos;
+        this.quadrant = quadrant;
+        this.computeRun();
+    }
+
+    private computeRun() {
+        switch(this.quadrant) {
+            case 1:
+                //第一象限
+                this.speedX = -1*this.speed*this.cos;
+                this.speedY = -1*Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*this.cos, 2));
+            ;break;
+            case 2:
+                //第二象限
+                this.speedX = this.speed*this.cos;
+                this.speedY = -1*Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*this.cos, 2));
+            ;break;
+            case 3:
+                //第三象限
+                this.speedX = this.speed*this.cos;
+                this.speedY = Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*this.cos, 2));
+            ;break;
+            case 4:
+                //第四象限
+                this.speedX = -1*this.speed*this.cos;
+                this.speedY = Math.sqrt(Math.pow(this.speed, 2)-Math.pow(this.speed*this.cos, 2));
+            ;break;
+            default:;
+        }
+    }
+
+    public addEventForRun() {
+        this.addEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
+    }
+
+    public removeEventForRun() {
+        this.removeEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
+    }
+
+    private operateBulletRun() {
+        this.y += this.speedY;
+        this.x += this.speedX;
+        if (this.y <= 0||this.y >= this.parent.height||this.x <= 0||this.x >= this.parent.height) {
+            this.removeEventForRun();
+            this.parent.removeChild(this);
         }
     }
 

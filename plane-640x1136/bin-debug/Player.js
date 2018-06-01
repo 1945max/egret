@@ -19,7 +19,9 @@ var Player = (function (_super) {
         var _this = _super.call(this) || this;
         _this.speed = 5;
         _this.bulletArray = [];
+        _this.boomBox = [];
         _this.createBulletArray();
+        _this.createBoomArray();
         return _this;
     }
     Player.prototype.setOption = function (cos, stageX, stageY, oX, oY) {
@@ -49,7 +51,6 @@ var Player = (function (_super) {
         this.parent.swapChildren(this, Main.gameStageContainer.pointPanel);
     };
     Player.prototype.createBulletArray = function () {
-        var previousBullet = null;
         for (var i = 0; i < 10; i++) {
             var bullet = new Bullet();
             bullet.graphics.beginFill(0xff6699, 1);
@@ -57,6 +58,38 @@ var Player = (function (_super) {
             bullet.graphics.endFill();
             bullet.name = "bullet_" + i;
             this.bulletArray.push(bullet);
+        }
+    };
+    Player.prototype.boom = function () {
+        if (Main.gameStageContainer.pointPanel.boom >= 1) {
+            Main.gameStageContainer.pointPanel.removeBoom();
+            var currentBoomArray = this.boomBox[2];
+            this.boomBox[2] = this.boomBox[1];
+            this.boomBox[1] = this.boomBox[0];
+            this.boomBox[0] = currentBoomArray;
+            for (var _i = 0, currentBoomArray_1 = currentBoomArray; _i < currentBoomArray_1.length; _i++) {
+                var boom = currentBoomArray_1[_i];
+                boom.x = this.x;
+                boom.y = this.y;
+                boom.addEventForRun();
+                this.parent.addChild(boom);
+                this.parent.swapChildren(boom, this);
+            }
+        }
+    };
+    Player.prototype.createBoomArray = function () {
+        var cos = [[Math.sqrt(3) / 2, 1], [1 / 2, 1], [Math.sqrt(3) / 2, 2], [1 / 2, 2], [Math.sqrt(3) / 2, 3], [1 / 2, 3], [Math.sqrt(3) / 2, 4], [1 / 2, 4]];
+        for (var i = 0; i < 3; i++) {
+            var boomArray = [];
+            for (var j = 0; j < 8; j++) {
+                var boom = new Boom(cos[j][0], cos[j][1]);
+                boom.graphics.beginFill(0xcc0099, 1);
+                boom.graphics.drawCircle(0, 0, 5);
+                boom.graphics.endFill();
+                boom.name = "boom_" + i + "_" + j;
+                boomArray.push(boom);
+            }
+            this.boomBox.push(boomArray);
         }
     };
     /**
@@ -202,4 +235,64 @@ var Bullet = (function (_super) {
     return Bullet;
 }(egret.Shape));
 __reflect(Bullet.prototype, "Bullet");
+var Boom = (function (_super) {
+    __extends(Boom, _super);
+    function Boom(cos, quadrant) {
+        var _this = _super.call(this) || this;
+        _this.speed = 10;
+        _this.speedX = 0;
+        _this.speedY = 0;
+        _this.quadrant = 1;
+        _this.cos = 0;
+        _this.cos = cos;
+        _this.quadrant = quadrant;
+        _this.computeRun();
+        return _this;
+    }
+    Boom.prototype.computeRun = function () {
+        switch (this.quadrant) {
+            case 1:
+                //第一象限
+                this.speedX = -1 * this.speed * this.cos;
+                this.speedY = -1 * Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
+                ;
+                break;
+            case 2:
+                //第二象限
+                this.speedX = this.speed * this.cos;
+                this.speedY = -1 * Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
+                ;
+                break;
+            case 3:
+                //第三象限
+                this.speedX = this.speed * this.cos;
+                this.speedY = Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
+                ;
+                break;
+            case 4:
+                //第四象限
+                this.speedX = -1 * this.speed * this.cos;
+                this.speedY = Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
+                ;
+                break;
+            default: ;
+        }
+    };
+    Boom.prototype.addEventForRun = function () {
+        this.addEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
+    };
+    Boom.prototype.removeEventForRun = function () {
+        this.removeEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
+    };
+    Boom.prototype.operateBulletRun = function () {
+        this.y += this.speedY;
+        this.x += this.speedX;
+        if (this.y <= 0 || this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
+            this.removeEventForRun();
+            this.parent.removeChild(this);
+        }
+    };
+    return Boom;
+}(egret.Shape));
+__reflect(Boom.prototype, "Boom");
 //# sourceMappingURL=Player.js.map
