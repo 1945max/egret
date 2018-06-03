@@ -4,7 +4,7 @@ class Enemy extends egret.Shape {
 
     private speedY:number = 10;
 
-    private bulletArray:Array<BulletOfEnemy> = [];
+    public bulletArray:Array<BulletOfEnemy> = [];
 
     public constructor(speedX:number, speedY:number) {
         super();
@@ -18,7 +18,7 @@ class Enemy extends egret.Shape {
         bullet.x = this.x;
         bullet.y = this.y;
         this.bulletArray.pop();
-        bullet.shootToTarget(this.x, this.y, Main.player.x, Main.player.y);
+        bullet.shootToTarget(this.x, this.y, Common.player.x, Common.player.y);
     }
 
     private createBullet() {
@@ -27,6 +27,7 @@ class Enemy extends egret.Shape {
             bulletOfEnemy.graphics.beginFill(0x000066, 1);
             bulletOfEnemy.graphics.drawCircle(0, 0, 5);
             bulletOfEnemy.graphics.endFill();
+            bulletOfEnemy.name = this.name+"-bullet_"+i;
             this.bulletArray.push(bulletOfEnemy);
         }
     }
@@ -39,13 +40,14 @@ class Enemy extends egret.Shape {
         this.removeEventListener(egret.Event.ENTER_FRAME, this.operateEnemyRun, this);
     }
 
-    public operateEnemyRun(enemyArray:Array<Enemy>) {
-        this.x+=this.speedX;
-        this.y+=this.speedY;
-        if (this.y <= 0||this.y >= this.parent.height||this.x <= 0||this.x >= this.parent.height) {
-            this.removeEventForRun();
-            this.parent.removeChild(this);
-            enemyArray.push(this);
+    private operateEnemyRun() {
+        if (Common.FRAME_STATUS) {
+            this.x+=this.speedX;
+            this.y+=this.speedY;
+            if (this.y <= 0||this.y >= this.parent.height||this.x <= 0||this.x >= this.parent.height) {
+                this.removeEventForRun();
+                this.parent.removeChild(this);
+            }
         }
     }
 
@@ -87,13 +89,15 @@ class BulletOfEnemy extends egret.Shape {
         this.removeEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
     }
 
-    private operateBulletRun(bulletArray:Array<BulletOfEnemy>) {
-        this.x+=this.speedX;
-        this.y+=this.speedY;
-        if (this.y >= this.parent.height||this.x <= 0||this.x >= this.parent.height) {
-            this.removeEventForRun();
-            this.parent.removeChild(this);
-            bulletArray.push(this);
+    private operateBulletRun() {
+        if (Common.FRAME_STATUS) {
+            this.x+=this.speedX;
+            this.y+=this.speedY;
+            if (this.y >= this.parent.height||this.x <= 0||this.x >= this.parent.height) {
+                this.removeEventForRun();
+                this.parent.removeChild(this);
+                (this.parent.getChildByName(this.name.split("-")[0]) as Enemy).bulletArray.push(this);
+            }
         }
     }
 

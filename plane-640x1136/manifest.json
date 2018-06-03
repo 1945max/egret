@@ -9,6 +9,7 @@
 		"libs/modules/promise/promise.js"
 	],
 	"game": [
+		"bin-debug/Common.js",
 		"bin-debug/Enemy.js",
 		"bin-debug/EnemyMoveManager.js",
 		"bin-debug/GameStageContainer.js",

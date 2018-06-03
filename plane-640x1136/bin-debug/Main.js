@@ -151,18 +151,26 @@ var Main = (function (_super) {
         gameStage.graphics.drawRoundRect(20, 20, Main.stageWidth - 40, Main.stageWidth - 40, 40, 40);
         gameStage.graphics.endFill();
         this.addChild(gameStage);
-        Main.gameStageContainer = new GameStageContainer(40, 40, Main.stageWidth - 80, Main.stageWidth - 80);
-        this.addChild(Main.gameStageContainer);
+        Common.gameStageContainer = new GameStageContainer(40, 40, Main.stageWidth - 80, Main.stageWidth - 80);
+        this.addChild(Common.gameStageContainer);
         var player = new Player();
         player.graphics.beginFill(0x33cc33, 1);
         player.graphics.drawCircle(0, 0, 20);
         player.graphics.endFill();
-        player.x = Main.gameStageContainer.width / 2;
-        player.y = Main.gameStageContainer.height - 50;
-        Main.player = player;
-        Main.gameStageContainer.addChild(player);
-        Main.gameStageContainer.setChildIndex(player, 20);
-        Main.gameStageContainer.swapChildren(player, Main.gameStageContainer.pointPanel);
+        player.x = Common.gameStageContainer.width / 2;
+        player.y = Common.gameStageContainer.height - 50;
+        Common.player = player;
+        Common.gameStageContainer.addChild(player);
+        Common.gameStageContainer.setChildIndex(player, 20);
+        Common.gameStageContainer.swapChildren(player, Common.gameStageContainer.pointPanel);
+        var screen = new egret.Shape();
+        screen.graphics.beginFill(0x000000, 1);
+        screen.graphics.drawRect(0, 0, Common.gameStageContainer.width, Common.gameStageContainer.height);
+        screen.graphics.endFill();
+        screen.x = Common.gameStageContainer.x;
+        screen.y = Common.gameStageContainer.y;
+        this.addChild(screen);
+        Common.gameStageContainer.mask = screen;
         /******************游戏窗口***********************/
         /******************方向摇杆***********************/
         var rockerRadius = Main.stageWidth / 6;
@@ -197,8 +205,8 @@ var Main = (function (_super) {
             var a = Math.abs(evt.stageY - Main.rockerY);
             var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
             var cos = b / c;
-            Main.player.setOption(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
-            Main.player.removeEventForRun();
+            Common.player.setOption(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
+            Common.player.removeEventForRun();
         }, this);
         rocker2.addEventListener(egret.TouchEvent.TOUCH_RELEASE_OUTSIDE, function (evt) {
             rocker2.x = Main.rockerX;
@@ -207,8 +215,8 @@ var Main = (function (_super) {
             var a = Math.abs(evt.stageY - Main.rockerY);
             var c = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
             var cos = b / c;
-            Main.player.setOption(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
-            Main.player.removeEventForRun();
+            Common.player.setOption(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
+            Common.player.removeEventForRun();
         }, this);
         /********************方向摇杆**********************/
         var btnA = new egret.Shape();
@@ -218,11 +226,11 @@ var Main = (function (_super) {
         btnA.touchEnabled = true;
         btnA.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (evt) {
             btnA.alpha = 0.5;
-            Main.player.longShoot();
+            Common.player.longShoot();
         }, this);
         btnA.addEventListener(egret.TouchEvent.TOUCH_END, function (evt) {
             btnA.alpha = 1;
-            Main.player.stopShoot();
+            Common.player.stopShoot();
         }, this);
         this.addChild(btnA);
         var btnB = new egret.Shape();
@@ -232,7 +240,7 @@ var Main = (function (_super) {
         btnB.touchEnabled = true;
         btnB.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (evt) {
             btnB.alpha = 0.5;
-            Main.player.boom();
+            Common.player.boom();
         }, this);
         btnB.addEventListener(egret.TouchEvent.TOUCH_END, function (evt) {
             btnB.alpha = 1;
@@ -246,6 +254,15 @@ var Main = (function (_super) {
         btnStart.x = Main.stageWidth / 2 - 140;
         btnStart.y = Main.stageHeight - rockerRadius - 20;
         this.addChild(btnStart);
+        btnStart.touchEnabled = true;
+        btnStart.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (evt) {
+            Common.FRAME_STATUS = !Common.FRAME_STATUS;
+            btnStart.alpha = 0.5;
+        }, this);
+        btnStart.addEventListener(egret.TouchEvent.TOUCH_END, function (evt) {
+            btnStart.alpha = 1;
+        }, this);
+        this.addChild(btnB);
         var btnSelect = new egret.Shape();
         btnSelect.graphics.beginFill(0xc2c2c2, 1);
         btnSelect.graphics.drawRoundRect(0, 0, 40, rockerRadius, 20, 20);
@@ -254,12 +271,22 @@ var Main = (function (_super) {
         btnSelect.x = Main.stageWidth / 2 - 60;
         btnSelect.y = Main.stageHeight - rockerRadius - 20;
         this.addChild(btnSelect);
+        Common.enemyMoveManager = new EnemyMoveManager(Common.gameStageContainer.width);
+        Main.launchEnemy();
+    };
+    Main.launchEnemy = function () {
+        if (Common.FRAME_STATUS) {
+            Common.enemyMoveManagerId = setTimeout(function () {
+                EnemyMoveManager.launch(0, 0);
+                Common.enemyMoveManagerId = setTimeout(function () {
+                    Main.launchEnemy();
+                }, 10000);
+            }, 2000);
+        }
+    };
+    Main.prototype.playBgm = function () {
         var sound = RES.getRes("bgm_mp3");
         Main.soundChannel = sound.play(0, -1);
-        var enemyMoveManager = new EnemyMoveManager();
-        setTimeout(function () {
-            enemyMoveManager.launch();
-        }, 1000);
     };
     Main.prototype.rockerEvent = function (evt, rockerRadius2, rocker2) {
         var b = Math.abs(evt.stageX - Main.rockerX);
@@ -292,10 +319,9 @@ var Main = (function (_super) {
             rocker2.x = evt.stageX;
             rocker2.y = evt.stageY;
         }
-        Main.player.setOption(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
-        Main.player.addEventForRun();
+        Common.player.setOption(cos, evt.stageX, evt.stageY, Main.rockerX, Main.rockerY);
+        Common.player.addEventForRun();
     };
-    Main.playerSpeed = 1;
     return Main;
 }(egret.DisplayObjectContainer));
 __reflect(Main.prototype, "Main");

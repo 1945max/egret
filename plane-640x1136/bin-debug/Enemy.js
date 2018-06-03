@@ -25,7 +25,7 @@ var Enemy = (function (_super) {
         bullet.x = this.x;
         bullet.y = this.y;
         this.bulletArray.pop();
-        bullet.shootToTarget(this.x, this.y, Main.player.x, Main.player.y);
+        bullet.shootToTarget(this.x, this.y, Common.player.x, Common.player.y);
     };
     Enemy.prototype.createBullet = function () {
         for (var i = 0; i < 10; i++) {
@@ -33,6 +33,7 @@ var Enemy = (function (_super) {
             bulletOfEnemy.graphics.beginFill(0x000066, 1);
             bulletOfEnemy.graphics.drawCircle(0, 0, 5);
             bulletOfEnemy.graphics.endFill();
+            bulletOfEnemy.name = this.name + "-bullet_" + i;
             this.bulletArray.push(bulletOfEnemy);
         }
     };
@@ -42,13 +43,14 @@ var Enemy = (function (_super) {
     Enemy.prototype.removeEventForRun = function () {
         this.removeEventListener(egret.Event.ENTER_FRAME, this.operateEnemyRun, this);
     };
-    Enemy.prototype.operateEnemyRun = function (enemyArray) {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.y <= 0 || this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
-            this.removeEventForRun();
-            this.parent.removeChild(this);
-            enemyArray.push(this);
+    Enemy.prototype.operateEnemyRun = function () {
+        if (Common.FRAME_STATUS) {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.y <= 0 || this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
+                this.removeEventForRun();
+                this.parent.removeChild(this);
+            }
         }
     };
     return Enemy;
@@ -90,13 +92,15 @@ var BulletOfEnemy = (function (_super) {
     BulletOfEnemy.prototype.removeEventForRun = function () {
         this.removeEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
     };
-    BulletOfEnemy.prototype.operateBulletRun = function (bulletArray) {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
-            this.removeEventForRun();
-            this.parent.removeChild(this);
-            bulletArray.push(this);
+    BulletOfEnemy.prototype.operateBulletRun = function () {
+        if (Common.FRAME_STATUS) {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
+                this.removeEventForRun();
+                this.parent.removeChild(this);
+                this.parent.getChildByName(this.name.split("-")[0]).bulletArray.push(this);
+            }
         }
     };
     return BulletOfEnemy;

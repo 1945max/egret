@@ -34,7 +34,7 @@ var Player = (function (_super) {
     Player.prototype.longShoot = function () {
         this.shoot();
         this.shootId = setTimeout(function () {
-            Main.player.longShoot();
+            Common.player.longShoot();
         }, 200);
     };
     Player.prototype.stopShoot = function () {
@@ -47,7 +47,7 @@ var Player = (function (_super) {
         currentBullet.addEventForRun();
         this.parent.addChild(currentBullet);
         this.parent.swapChildren(currentBullet, this);
-        this.parent.swapChildren(this, Main.gameStageContainer.pointPanel);
+        this.parent.swapChildren(this, Common.gameStageContainer.pointPanel);
     };
     Player.prototype.createBulletArray = function () {
         for (var i = 0; i < 10; i++) {
@@ -60,8 +60,8 @@ var Player = (function (_super) {
         }
     };
     Player.prototype.boom = function () {
-        if (Main.gameStageContainer.pointPanel.boom >= 1) {
-            Main.gameStageContainer.pointPanel.removeBoom();
+        if (Common.gameStageContainer.pointPanel.boom >= 1) {
+            Common.gameStageContainer.pointPanel.removeBoom();
             var currentBoomArray = this.boomBox[2];
             this.boomBox[2] = this.boomBox[1];
             this.boomBox[1] = this.boomBox[0];
@@ -113,13 +113,13 @@ var Player = (function (_super) {
         else {
             bSpeed = aSpeed = this.speed;
         }
-        if (this.x >= Main.gameStageContainer.width - this.width) {
+        if (this.x >= Common.gameStageContainer.width - this.width) {
             this.x -= bSpeed;
         }
         if (this.x < this.width) {
             this.x += bSpeed;
         }
-        if (this.y >= Main.gameStageContainer.height - this.height) {
+        if (this.y >= Common.gameStageContainer.height - this.height) {
             this.y -= aSpeed;
         }
         if (this.y < this.height) {
@@ -232,7 +232,7 @@ var Bullet = (function (_super) {
     Bullet.prototype.operateBulletRun = function () {
         this.y -= this.speed;
         if (this.y <= this.width) {
-            Main.player.bulletArray.push(this);
+            Common.player.bulletArray.push(this);
             this.removeEventForRun();
             if (this.parent) {
                 this.parent.removeChild(this);
@@ -292,11 +292,13 @@ var Boom = (function (_super) {
         this.removeEventListener(egret.Event.ENTER_FRAME, this.operateBoomRun, this);
     };
     Boom.prototype.operateBoomRun = function () {
-        this.y += this.speedY;
-        this.x += this.speedX;
-        if (this.y <= 0 || this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
-            this.removeEventForRun();
-            this.parent.removeChild(this);
+        if (Common.FRAME_STATUS) {
+            this.y += this.speedY;
+            this.x += this.speedX;
+            if (this.y <= 0 || this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
+                this.removeEventForRun();
+                this.parent.removeChild(this);
+            }
         }
     };
     return Boom;
