@@ -50,6 +50,7 @@ class Enemy extends egret.Shape {
                 Common.enemyMoveManager.enemyArray.push(this);
             }
         }
+        
     }
 
 }
