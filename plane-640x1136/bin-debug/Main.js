@@ -271,18 +271,10 @@ var Main = (function (_super) {
         btnSelect.x = Main.stageWidth / 2 - 60;
         btnSelect.y = Main.stageHeight - rockerRadius - 20;
         this.addChild(btnSelect);
-        Common.enemyMoveManager = new EnemyMoveManager(Common.gameStageContainer.width);
-        Main.launchEnemy();
-    };
-    Main.launchEnemy = function () {
-        if (Common.FRAME_STATUS) {
-            Common.enemyMoveManagerId = setTimeout(function () {
-                EnemyMoveManager.launch(0, 0);
-                Common.enemyMoveManagerId = setTimeout(function () {
-                    Main.launchEnemy();
-                }, 10000);
-            }, 2000);
-        }
+        Common.mapConfigs = RES.getRes("mapConfig_json");
+        Common.enemyMoveManager = new EnemyMoveManager();
+        console.log(JSON.stringify(Common.mapConfigs));
+        Common.system = new System();
     };
     Main.prototype.playBgm = function () {
         var sound = RES.getRes("bgm_mp3");

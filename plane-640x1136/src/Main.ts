@@ -246,21 +246,12 @@ class Main extends egret.DisplayObjectContainer {
         btnSelect.y = Main.stageHeight-rockerRadius-20;
         this.addChild(btnSelect);
 
-        Common.enemyMoveManager = new EnemyMoveManager(Common.gameStageContainer.width);
-        Main.launchEnemy();
+        Common.mapConfigs = RES.getRes("mapConfig_json");
+        Common.enemyMoveManager = new EnemyMoveManager();
+        console.log(JSON.stringify(Common.mapConfigs));
+        Common.system = new System();
     }
 
-    static launchEnemy() {
-        if (Common.FRAME_STATUS) {
-
-        Common.enemyMoveManagerId = setTimeout(function() {
-            EnemyMoveManager.launch(0, 0);
-            Common.enemyMoveManagerId = setTimeout(function() {
-                Main.launchEnemy();
-            }, 10000);
-        }, 2000);
-        }
-    }
 
     private playBgm() {
         let sound:egret.Sound = RES.getRes("bgm_mp3");

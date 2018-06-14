@@ -163,7 +163,8 @@ class Player extends egret.Shape {
      * 计算自机运行方向与角速度，并控制自机移动
      */
     public operatePlayerRun() {
-        switch(this.computeQuadrant()) {
+        if (Common.FRAME_STATUS) {
+            switch(this.computeQuadrant()) {
             case 1:
                 //第一象限
                 this.x = this.x - this.speed*this.cos;
@@ -202,7 +203,7 @@ class Player extends egret.Shape {
                     this.y-=this.speed
                 }
                 this.checkBorder(0);
-            ;
+        }
         }
     }
 
@@ -242,13 +243,15 @@ class Bullet extends egret.Shape {
     }
 
     private operateBulletRun() {
-        this.y -= this.speed;
+        if (Common.FRAME_STATUS) {
+            this.y -= this.speed;
         if (this.y <= this.width) {
             Common.player.bulletArray.push(this);
             this.removeEventForRun();
             if (this.parent) {
                 this.parent.removeChild(this);
             }
+        }
         }
     }
 

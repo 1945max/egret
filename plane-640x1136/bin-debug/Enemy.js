@@ -13,7 +13,7 @@ var Enemy = (function (_super) {
     function Enemy(speedX, speedY) {
         var _this = _super.call(this) || this;
         _this.speedX = 0;
-        _this.speedY = 10;
+        _this.speedY = 5;
         _this.bulletArray = [];
         _this.speedX = speedX;
         _this.speedY = speedY;
@@ -50,6 +50,7 @@ var Enemy = (function (_super) {
             if (this.y <= 0 || this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
                 this.removeEventForRun();
                 this.parent.removeChild(this);
+                Common.enemyMoveManager.enemyArray.push(this);
             }
         }
     };

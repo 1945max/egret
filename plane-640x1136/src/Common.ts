@@ -9,5 +9,9 @@ class Common {
     public static player:Player;
 
     public static enemyMoveManagerId:number;
+
+    public static mapConfigs;
+
+    public static system:System;
     
 }

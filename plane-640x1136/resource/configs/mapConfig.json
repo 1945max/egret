@@ -1,0 +1,12 @@
+{
+    "time":"300000",
+    "enemy_count":20,
+    "stage_width":8,
+    "enemy_team":[
+        {"time":"8", "enemy":[1, 7]},
+        {"time":"7", "enemy":[1, 7]},
+        {"time":"6", "enemy":[1, 7]},
+        {"time":"5", "enemy":[1, 7]},
+        {"time":"4", "enemy":[1, 7]}
+    ]
+}

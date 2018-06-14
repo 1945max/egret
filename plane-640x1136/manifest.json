@@ -15,6 +15,7 @@
 		"bin-debug/GameStageContainer.js",
 		"bin-debug/LoadingUI.js",
 		"bin-debug/Main.js",
-		"bin-debug/Player.js"
+		"bin-debug/Player.js",
+		"bin-debug/System.js"
 	]
 }

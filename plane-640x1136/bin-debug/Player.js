@@ -146,52 +146,53 @@ var Player = (function (_super) {
      * 计算自机运行方向与角速度，并控制自机移动
      */
     Player.prototype.operatePlayerRun = function () {
-        switch (this.computeQuadrant()) {
-            case 1:
-                //第一象限
-                this.x = this.x - this.speed * this.cos;
-                this.y = this.y - Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
-                this.checkBorder(this.cos);
-                ;
-                break;
-            case 2:
-                //第二象限
-                this.x = this.x + this.speed * this.cos;
-                this.y = this.y - Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
-                this.checkBorder(this.cos);
-                ;
-                break;
-            case 3:
-                //第三象限
-                this.x = this.x + this.speed * this.cos;
-                this.y = this.y + Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
-                this.checkBorder(this.cos);
-                ;
-                break;
-            case 4:
-                //第四象限
-                this.x = this.x - this.speed * this.cos;
-                this.y = this.y + Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
-                this.checkBorder(this.cos);
-                ;
-                break;
-            default:
-                //y轴无速度
-                if ((this.stageX - this.oX) > 0) {
-                    this.x += this.speed;
-                }
-                else if ((this.stageX - this.oX) < 0) {
-                    this.x -= this.speed;
-                }
-                //x轴无速度
-                if ((this.stageY - this.oY) > 0) {
-                    this.y += this.speed;
-                }
-                else if ((this.stageY - this.oY) < 0) {
-                    this.y -= this.speed;
-                }
-                this.checkBorder(0);
-                ;
+        if (Common.FRAME_STATUS) {
+            switch (this.computeQuadrant()) {
+                case 1:
+                    //第一象限
+                    this.x = this.x - this.speed * this.cos;
+                    this.y = this.y - Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
+                    this.checkBorder(this.cos);
+                    ;
+                    break;
+                case 2:
+                    //第二象限
+                    this.x = this.x + this.speed * this.cos;
+                    this.y = this.y - Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
+                    this.checkBorder(this.cos);
+                    ;
+                    break;
+                case 3:
+                    //第三象限
+                    this.x = this.x + this.speed * this.cos;
+                    this.y = this.y + Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
+                    this.checkBorder(this.cos);
+                    ;
+                    break;
+                case 4:
+                    //第四象限
+                    this.x = this.x - this.speed * this.cos;
+                    this.y = this.y + Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speed * this.cos, 2));
+                    this.checkBorder(this.cos);
+                    ;
+                    break;
+                default:
+                    //y轴无速度
+                    if ((this.stageX - this.oX) > 0) {
+                        this.x += this.speed;
+                    }
+                    else if ((this.stageX - this.oX) < 0) {
+                        this.x -= this.speed;
+                    }
+                    //x轴无速度
+                    if ((this.stageY - this.oY) > 0) {
+                        this.y += this.speed;
+                    }
+                    else if ((this.stageY - this.oY) < 0) {
+                        this.y -= this.speed;
+                    }
+                    this.checkBorder(0);
+            }
         }
     };
     Player.prototype.computeQuadrant = function () {
@@ -230,12 +231,14 @@ var Bullet = (function (_super) {
         this.removeEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
     };
     Bullet.prototype.operateBulletRun = function () {
-        this.y -= this.speed;
-        if (this.y <= this.width) {
-            Common.player.bulletArray.push(this);
-            this.removeEventForRun();
-            if (this.parent) {
-                this.parent.removeChild(this);
+        if (Common.FRAME_STATUS) {
+            this.y -= this.speed;
+            if (this.y <= this.width) {
+                Common.player.bulletArray.push(this);
+                this.removeEventForRun();
+                if (this.parent) {
+                    this.parent.removeChild(this);
+                }
             }
         }
     };

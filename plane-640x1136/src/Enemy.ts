@@ -2,7 +2,7 @@ class Enemy extends egret.Shape {
 
     private speedX:number = 0;
 
-    private speedY:number = 10;
+    private speedY:number = 5;
 
     public bulletArray:Array<BulletOfEnemy> = [];
 
@@ -47,6 +47,7 @@ class Enemy extends egret.Shape {
             if (this.y <= 0||this.y >= this.parent.height||this.x <= 0||this.x >= this.parent.height) {
                 this.removeEventForRun();
                 this.parent.removeChild(this);
+                Common.enemyMoveManager.enemyArray.push(this);
             }
         }
     }

@@ -4,8 +4,8 @@
 */
 class GameStageContainer extends egret.DisplayObjectContainer {
 
-    public pointPanel:PointPanel;
 
+    public pointPanel:PointPanel;
     public constructor(x:number, y:number, width:number, height:number) {
         super();
         this.x = x;
