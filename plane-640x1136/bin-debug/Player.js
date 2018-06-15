@@ -32,10 +32,12 @@ var Player = (function (_super) {
         this.oY = oY;
     };
     Player.prototype.longShoot = function () {
-        this.shoot();
-        this.shootId = setTimeout(function () {
-            Common.player.longShoot();
-        }, 200);
+        if (Common.FRAME_STATUS) {
+            this.shoot();
+            this.shootId = setTimeout(function () {
+                Common.player.longShoot();
+            }, 200);
+        }
     };
     Player.prototype.stopShoot = function () {
         clearTimeout(this.shootId);
@@ -60,19 +62,21 @@ var Player = (function (_super) {
         }
     };
     Player.prototype.boom = function () {
-        if (Common.gameStageContainer.pointPanel.boom >= 1) {
-            Common.gameStageContainer.pointPanel.removeBoom();
-            var currentBoomArray = this.boomBox[2];
-            this.boomBox[2] = this.boomBox[1];
-            this.boomBox[1] = this.boomBox[0];
-            this.boomBox[0] = currentBoomArray;
-            for (var _i = 0, currentBoomArray_1 = currentBoomArray; _i < currentBoomArray_1.length; _i++) {
-                var boom = currentBoomArray_1[_i];
-                boom.x = this.x;
-                boom.y = this.y;
-                boom.addEventForRun();
-                this.parent.addChild(boom);
-                this.parent.swapChildren(boom, this);
+        if (Common.FRAME_STATUS) {
+            if (Common.gameStageContainer.pointPanel.boom >= 1) {
+                Common.gameStageContainer.pointPanel.removeBoom();
+                var currentBoomArray = this.boomBox[2];
+                this.boomBox[2] = this.boomBox[1];
+                this.boomBox[1] = this.boomBox[0];
+                this.boomBox[0] = currentBoomArray;
+                for (var _i = 0, currentBoomArray_1 = currentBoomArray; _i < currentBoomArray_1.length; _i++) {
+                    var boom = currentBoomArray_1[_i];
+                    boom.x = this.x;
+                    boom.y = this.y;
+                    boom.addEventForRun();
+                    this.parent.addChild(boom);
+                    this.parent.swapChildren(boom, this);
+                }
             }
         }
     };

@@ -18,7 +18,7 @@ class EnemyMoveManager {
     public createEnemy() {
         let configs = Common.mapConfigs;
         for (var i = 0;i < configs.enemy_count;i++) {
-            let enemy = new Enemy(0, 4);
+            let enemy = new Enemy(0, 3);
             enemy.graphics.beginFill(0x0066ff, 1);
             enemy.graphics.drawRect(0, -Common.player.width, Common.player.width, Common.player.width);
             enemy.graphics.endFill();
@@ -30,13 +30,11 @@ class EnemyMoveManager {
 
     public operateEnemyRun(time) {
         if (this.indexs.length>0&&this.indexs[this.indexs.length-1].time==time) {
-            let indexs = this.indexs.pop();
-            for (var i = 0;i < indexs.enemy.length;i++) {
+            let index = this.indexs.pop();
+            for (var i = 0;i < index.enemy.length;i++) {
                 let enemy = this.enemyArray.pop();
-                // enemy.y = -this.spaceY;
                 enemy.y = 0;
-                enemy.x = this.spaceX*indexs.enemy[i]-this.spaceY/2;
-                console.log(enemy.x+"_"+enemy.y);
+                enemy.x = this.spaceX*index.enemy[i]-this.spaceY/2;
                 Common.gameStageContainer.addChild(enemy);
                 enemy.addEventForRun();
             }

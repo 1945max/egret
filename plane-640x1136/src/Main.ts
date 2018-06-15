@@ -229,7 +229,20 @@ class Main extends egret.DisplayObjectContainer {
         this.addChild(btnStart);
         btnStart.touchEnabled = true;
         btnStart.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function(evt:egret.TouchEvent):void {
-            Common.FRAME_STATUS = !Common.FRAME_STATUS;
+            if (!Common.FRAME_STATUS) {
+                    Common.system.timer.start();
+                setTimeout(function() {
+                    Common.FRAME_STATUS = !Common.FRAME_STATUS;
+                }, Common.system.dely)
+                Common.system.pauseTimeCount = Common.system.pauseTimeCount+egret.getTimer()-Common.system.pauseTime;
+                console.log(Common.system.pauseTimeCount);
+            } else {
+                Common.system.timer.stop();
+                Common.system.pauseTime = egret.getTimer();
+                Common.system.dely = (egret.getTimer()-Common.system.startTime-Common.system.pauseTimeCount)%1000;
+                Common.FRAME_STATUS = !Common.FRAME_STATUS;
+            }
+            Common.gameStageContainer.pausePanel.show();
             btnStart.alpha = 0.5;
         }, this);
         btnStart.addEventListener(egret.TouchEvent.TOUCH_END, function(evt:egret.TouchEvent):void {
@@ -248,8 +261,8 @@ class Main extends egret.DisplayObjectContainer {
 
         Common.mapConfigs = RES.getRes("mapConfig_json");
         Common.enemyMoveManager = new EnemyMoveManager();
-        console.log(JSON.stringify(Common.mapConfigs));
         Common.system = new System();
+        this.playBgm();
     }
 
 

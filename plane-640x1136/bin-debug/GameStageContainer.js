@@ -22,6 +22,7 @@ var GameStageContainer = (function (_super) {
         _this.height = height;
         _this.createScreen(width, height);
         _this.createPointPanel(width, height);
+        _this.createPausePanel(width, height);
         return _this;
     }
     GameStageContainer.prototype.createScreen = function (width, height) {
@@ -37,9 +38,48 @@ var GameStageContainer = (function (_super) {
         this.addChild(this.pointPanel);
         this.setChildIndex(this.pointPanel, 100);
     };
+    GameStageContainer.prototype.createPausePanel = function (width, height) {
+        this.pausePanel = new PausePanel(0, 0, width, height);
+    };
     return GameStageContainer;
 }(egret.DisplayObjectContainer));
 __reflect(GameStageContainer.prototype, "GameStageContainer");
+var PausePanel = (function (_super) {
+    __extends(PausePanel, _super);
+    function PausePanel(x, y, width, height) {
+        var _this = _super.call(this) || this;
+        var bg = new egret.Shape();
+        bg.graphics.beginFill(0x000000, 0.5);
+        bg.graphics.drawRect(0, 0, width, height);
+        bg.graphics.endFill();
+        _this.addChild(bg);
+        var textField = new egret.TextField();
+        textField.text = "PAUSE";
+        textField.size = 100;
+        textField.textColor = 0xffffff;
+        textField.x = (width - textField.width) / 2;
+        textField.y = (height - textField.height) / 2;
+        _this.addChild(textField);
+        _this.x = x;
+        _this.y = y;
+        _this.width = width;
+        _this.height = height;
+        return _this;
+    }
+    PausePanel.prototype.show = function () {
+        if (Common.gameStageContainer.contains(this)) {
+            Common.gameStageContainer.removeChild(this);
+            // egret.Tween.get(this).to({y:this.height}, 1000, egret.Ease.backInOut).call(function() {
+            // });
+        }
+        else {
+            Common.gameStageContainer.addChild(this);
+            // egret.Tween.get(this).to({y:0}, 1000, egret.Ease.backInOut);
+        }
+    };
+    return PausePanel;
+}(egret.DisplayObjectContainer));
+__reflect(PausePanel.prototype, "PausePanel");
 /**
  * 参数面板对象
  *

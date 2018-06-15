@@ -1,0 +1,20 @@
+{
+	"groups": [
+		{
+			"name": "preload",
+			"keys": "bgm_mp3,mapConfig_json"
+		}
+	],
+	"resources": [
+		{
+			"name": "bgm_mp3",
+			"type": "sound",
+			"url": "assets/bgm.mp3"
+		},
+		{
+			"name": "mapConfig_json",
+			"type": "json",
+			"url": "configs/mapConfig.json"
+		}
+	]
+}

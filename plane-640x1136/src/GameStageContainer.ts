@@ -6,6 +6,9 @@ class GameStageContainer extends egret.DisplayObjectContainer {
 
 
     public pointPanel:PointPanel;
+
+    public pausePanel:PausePanel;
+
     public constructor(x:number, y:number, width:number, height:number) {
         super();
         this.x = x;
@@ -14,6 +17,7 @@ class GameStageContainer extends egret.DisplayObjectContainer {
         this.height = height;
         this.createScreen(width, height);
         this.createPointPanel(width, height);
+        this.createPausePanel(width, height);
     }
 
     private createScreen(width:number, height:number) {
@@ -29,6 +33,45 @@ class GameStageContainer extends egret.DisplayObjectContainer {
         this.pointPanel = new PointPanel(0, 0, width, height);
         this.addChild(this.pointPanel);
         this.setChildIndex(this.pointPanel, 100);
+    }
+
+    private createPausePanel(width:number, height:number) {
+        this.pausePanel = new PausePanel(0, 0, width, height);
+    }
+
+}
+
+class PausePanel extends egret.DisplayObjectContainer {
+
+    public constructor(x:number, y:number, width:number, height:number) {
+        super();
+        let bg = new egret.Shape();
+        bg.graphics.beginFill(0x000000, 0.5);
+        bg.graphics.drawRect(0, 0, width, height);
+        bg.graphics.endFill();
+        this.addChild(bg);
+        let textField = new egret.TextField();
+        textField.text = "PAUSE";
+        textField.size = 100;
+        textField.textColor = 0xffffff;
+        textField.x = (width - textField.width)/2;
+        textField.y = (height - textField.height)/2;
+        this.addChild(textField);
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+
+    public show() {
+        if (Common.gameStageContainer.contains(this)) {
+            Common.gameStageContainer.removeChild(this);
+            // egret.Tween.get(this).to({y:this.height}, 1000, egret.Ease.backInOut).call(function() {
+            // });
+        } else {
+            Common.gameStageContainer.addChild(this);
+            // egret.Tween.get(this).to({y:0}, 1000, egret.Ease.backInOut);
+        }   
     }
 
 }

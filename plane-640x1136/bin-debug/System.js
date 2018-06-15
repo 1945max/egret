@@ -3,14 +3,16 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
 };
 var System = (function () {
     function System() {
+        this.pauseTimeCount = 0;
         this.init();
     }
     System.prototype.init = function () {
-        var timer = new egret.Timer(1000, Common.mapConfigs.time);
-        timer.addEventListener(egret.TimerEvent.TIMER, function (evt) {
-            Common.enemyMoveManager.operateEnemyRun(timer.currentCount);
+        this.timer = new egret.Timer(1000, Common.mapConfigs.time);
+        this.timer.addEventListener(egret.TimerEvent.TIMER, function (evt) {
+            Common.enemyMoveManager.operateEnemyRun(Common.system.timer.currentCount);
         }, this);
-        timer.start();
+        this.startTime = egret.getTimer();
+        this.timer.start();
     };
     return System;
 }());

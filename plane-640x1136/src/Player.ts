@@ -41,10 +41,12 @@ class Player extends egret.Shape {
     }
 
     public longShoot() {
-        this.shoot();
-        this.shootId = setTimeout(function() {
-            Common.player.longShoot();
-        }, 200);
+        if (Common.FRAME_STATUS) {
+            this.shoot();
+            this.shootId = setTimeout(function() {
+                Common.player.longShoot();
+            }, 200);
+        }
     }
 
     public stopShoot() {
@@ -73,18 +75,20 @@ class Player extends egret.Shape {
     }
 
     public boom() {
-        if (Common.gameStageContainer.pointPanel.boom >= 1) {
-            Common.gameStageContainer.pointPanel.removeBoom();
-            let currentBoomArray = this.boomBox[2];
-            this.boomBox[2] = this.boomBox[1];
-            this.boomBox[1] = this.boomBox[0];
-            this.boomBox[0] = currentBoomArray;
-            for (var boom of currentBoomArray) {
-                boom.x = this.x;
-                boom.y = this.y;
-                boom.addEventForRun();
-                this.parent.addChild(boom);
-                this.parent.swapChildren(boom, this);
+        if (Common.FRAME_STATUS) {
+            if (Common.gameStageContainer.pointPanel.boom >= 1) {
+                Common.gameStageContainer.pointPanel.removeBoom();
+                let currentBoomArray = this.boomBox[2];
+                this.boomBox[2] = this.boomBox[1];
+                this.boomBox[1] = this.boomBox[0];
+                this.boomBox[0] = currentBoomArray;
+                for (var boom of currentBoomArray) {
+                    boom.x = this.x;
+                    boom.y = this.y;
+                    boom.addEventForRun();
+                    this.parent.addChild(boom);
+                    this.parent.swapChildren(boom, this);
+                }
             }
         }
     }
