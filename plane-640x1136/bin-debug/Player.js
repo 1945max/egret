@@ -44,12 +44,14 @@ var Player = (function (_super) {
     };
     Player.prototype.shoot = function () {
         var currentBullet = this.bulletArray.pop();
-        currentBullet.x = this.x;
-        currentBullet.y = this.y;
-        currentBullet.addEventForRun();
-        this.parent.addChild(currentBullet);
-        this.parent.swapChildren(currentBullet, this);
-        this.parent.swapChildren(this, Common.gameStageContainer.pointPanel);
+        if (currentBullet) {
+            currentBullet.x = this.x;
+            currentBullet.y = this.y;
+            currentBullet.addEventForRun();
+            this.parent.addChild(currentBullet);
+            this.parent.swapChildren(currentBullet, this);
+            this.parent.swapChildren(this, Common.gameStageContainer.pointPanel);
+        }
     };
     Player.prototype.createBulletArray = function () {
         for (var i = 0; i < 10; i++) {
@@ -235,9 +237,11 @@ var Bullet = (function (_super) {
         this.removeEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
     };
     Bullet.prototype.operateBulletRun = function () {
-        for (var _i = 0, _a = Common.enemyMoveManager.enemyArrayRun; _i < _a.length; _i++) {
-            var enemy = _a[_i];
-            Common.shoot(enemy, this);
+        if (Common.enemyMoveManager.enemyArrayRun.length > 0) {
+            for (var _i = 0, _a = Common.enemyMoveManager.enemyArrayRun; _i < _a.length; _i++) {
+                var enemy = _a[_i];
+                Common.shoot(enemy, this);
+            }
         }
         if (Common.FRAME_STATUS) {
             this.y -= this.speed;
@@ -313,11 +317,16 @@ var Boom = (function (_super) {
                 var enemy = _a[_i];
                 Common.boom(enemy, this);
             }
-            if (this.y <= 0 || this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
-                this.removeEventForRun();
-                this.parent.removeChild(this);
+            if (this.parent) {
+                if (this.y <= 0 || this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
+                    this.stop();
+                }
             }
         }
+    };
+    Boom.prototype.stop = function () {
+        this.removeEventForRun();
+        this.parent.removeChild(this);
     };
     return Boom;
 }(egret.Shape));

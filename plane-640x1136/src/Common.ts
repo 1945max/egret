@@ -17,8 +17,8 @@ class Common {
     static boom(obj1:Enemy, obj2:Boom) {
         if (Common.hitTestP(obj1, obj2)) {
             console.log("碰撞类型boom...");
-                Common.gameStageContainer.removeChild(obj1);
-                Common.gameStageContainer.removeChild(obj2);
+                obj1.stop();
+                obj2.stop();
                 let boom = new egret.Shape();
                 boom.graphics.beginFill(0xffff00, 1);
                 boom.graphics.drawCircle(0, 0, 10);
@@ -98,6 +98,7 @@ class Common {
     }
 
     static hitTestP(obj1: egret.DisplayObject,obj2: egret.DisplayObject): boolean {
+        if (obj1&&obj2) {
         var rect1:egret.Rectangle = obj1.getBounds();//获取显示对象的测量边界
         var rect2:egret.Rectangle = obj2.getBounds();
         rect1.x = obj1.x;
@@ -106,6 +107,8 @@ class Common {
         rect2.y = obj2.y;
         //此方法检查指定的 Rectangle 对象的 x、y、width 和 height 属性，以查看它是否与此 Rectangle 对象相交。
         return rect1.intersects(rect2);
+
+        }
     }
     
 }

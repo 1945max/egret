@@ -54,13 +54,17 @@ class Player extends egret.Shape {
     }
 
     private shoot() {
+
         let currentBullet = this.bulletArray.pop();
+        if (currentBullet) {
+
         currentBullet.x = this.x;
         currentBullet.y = this.y;
         currentBullet.addEventForRun();
         this.parent.addChild(currentBullet);
         this.parent.swapChildren(currentBullet, this);
         this.parent.swapChildren(this, Common.gameStageContainer.pointPanel);
+        }
     }
 
     private createBulletArray() {
@@ -247,8 +251,11 @@ class Bullet extends egret.Shape {
     }
 
     private operateBulletRun() {
+        if (Common.enemyMoveManager.enemyArrayRun.length>0) {
+
         for (let enemy of Common.enemyMoveManager.enemyArrayRun) {
             Common.shoot(enemy, this);
+        }
         }
         if (Common.FRAME_STATUS) {
             this.y -= this.speed;
@@ -328,11 +335,18 @@ class Boom extends egret.Shape {
             for (let enemy of Common.enemyMoveManager.enemyArrayRun) {
                 Common.boom(enemy, this);
             }
+            if (this.parent) {
+
             if (this.y <= 0||this.y >= this.parent.height||this.x <= 0||this.x >= this.parent.height) {
-                this.removeEventForRun();
-                this.parent.removeChild(this);
+                this.stop();
+            }
             }
         }
+    }
+
+    public stop() {
+        this.removeEventForRun();
+        this.parent.removeChild(this);
     }
 
 }
