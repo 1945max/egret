@@ -122,6 +122,7 @@ var Main = (function (_super) {
                         return [4 /*yield*/, RES.loadGroup("preload", 1, loadingView)];
                     case 2:
                         _a.sent();
+                        this.stage.removeChild(loadingView);
                         return [3 /*break*/, 4];
                     case 3:
                         e_1 = _a.sent();
