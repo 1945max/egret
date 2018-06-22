@@ -2,6 +2,8 @@ class EnemyMoveManager {
 
     public enemyArray:Array<Enemy> = [];
 
+    public enemyArrayRun:Array<Enemy> = [];
+
     private spaceX:number;
 
     private spaceY:number;
@@ -22,7 +24,7 @@ class EnemyMoveManager {
             enemy.graphics.beginFill(0x0066ff, 1);
             enemy.graphics.drawRect(0, -Common.player.width, Common.player.width, Common.player.width);
             enemy.graphics.endFill();
-            enemy.rotation = 45;
+            // enemy.rotation = 45;
             enemy.name = "enemy_"+i;
             this.enemyArray.push(enemy);
         }
@@ -33,6 +35,7 @@ class EnemyMoveManager {
             let index = this.indexs.pop();
             for (var i = 0;i < index.enemy.length;i++) {
                 let enemy = this.enemyArray.pop();
+                this.enemyArrayRun.push(enemy);
                 enemy.y = 0;
                 enemy.x = this.spaceX*index.enemy[i]-this.spaceY/2;
                 Common.gameStageContainer.addChild(enemy);

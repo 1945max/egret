@@ -247,15 +247,22 @@ class Bullet extends egret.Shape {
     }
 
     private operateBulletRun() {
+        for (let enemy of Common.enemyMoveManager.enemyArrayRun) {
+            Common.shoot(enemy, this);
+        }
         if (Common.FRAME_STATUS) {
             this.y -= this.speed;
         if (this.y <= this.width) {
-            Common.player.bulletArray.push(this);
-            this.removeEventForRun();
-            if (this.parent) {
-                this.parent.removeChild(this);
-            }
+            this.stop();
         }
+        }
+    }
+
+    public stop() {
+        Common.player.bulletArray.push(this);
+        this.removeEventForRun();
+        if (this.parent) {
+           this.parent.removeChild(this);
         }
     }
 
@@ -318,6 +325,9 @@ class Boom extends egret.Shape {
         if (Common.FRAME_STATUS) {
             this.y += this.speedY;
             this.x += this.speedX;
+            for (let enemy of Common.enemyMoveManager.enemyArrayRun) {
+                Common.boom(enemy, this);
+            }
             if (this.y <= 0||this.y >= this.parent.height||this.x <= 0||this.x >= this.parent.height) {
                 this.removeEventForRun();
                 this.parent.removeChild(this);

@@ -44,15 +44,22 @@ class Enemy extends egret.Shape {
         if (Common.FRAME_STATUS) {
             this.x+=this.speedX;
             this.y+=this.speedY;
+            if (null != this.parent) {
             if (this.y <= 0||this.y >= this.parent.height||this.x <= 0||this.x >= this.parent.height) {
-                this.removeEventForRun();
-                this.parent.removeChild(this);
-                Common.enemyMoveManager.enemyArray.push(this);
+                this.stop();
             }
+            }
+            Common.hit(Common.player, this);
         }
         
     }
 
+    public stop() {
+        this.removeEventForRun();
+        this.parent.removeChild(this);
+        Common.enemyMoveManager.enemyArray.push(this);
+        delete Common.enemyMoveManager.enemyArrayRun[Common.enemyMoveManager.enemyArrayRun.indexOf(this)]
+    }
 }
 
 class BulletOfEnemy extends egret.Shape {

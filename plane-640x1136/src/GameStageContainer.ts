@@ -43,6 +43,8 @@ class GameStageContainer extends egret.DisplayObjectContainer {
 
 class PausePanel extends egret.DisplayObjectContainer {
 
+    public textField:egret.TextField;
+
     public constructor(x:number, y:number, width:number, height:number) {
         super();
         let bg = new egret.Shape();
@@ -50,13 +52,13 @@ class PausePanel extends egret.DisplayObjectContainer {
         bg.graphics.drawRect(0, 0, width, height);
         bg.graphics.endFill();
         this.addChild(bg);
-        let textField = new egret.TextField();
-        textField.text = "PAUSE";
-        textField.size = 100;
-        textField.textColor = 0xffffff;
-        textField.x = (width - textField.width)/2;
-        textField.y = (height - textField.height)/2;
-        this.addChild(textField);
+        this.textField = new egret.TextField();
+        this.textField.text = "PAUSE";
+        this.textField.size = 100;
+        this.textField.textColor = 0xffffff;
+        this.textField.x = (width - this.textField.width)/2;
+        this.textField.y = (height - this.textField.height)/2;
+        this.addChild(this.textField);
         this.x = x;
         this.y = y;
         this.width = width;

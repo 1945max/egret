@@ -47,12 +47,19 @@ var Enemy = (function (_super) {
         if (Common.FRAME_STATUS) {
             this.x += this.speedX;
             this.y += this.speedY;
-            if (this.y <= 0 || this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
-                this.removeEventForRun();
-                this.parent.removeChild(this);
-                Common.enemyMoveManager.enemyArray.push(this);
+            if (null != this.parent) {
+                if (this.y <= 0 || this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
+                    this.stop();
+                }
             }
+            Common.hit(Common.player, this);
         }
+    };
+    Enemy.prototype.stop = function () {
+        this.removeEventForRun();
+        this.parent.removeChild(this);
+        Common.enemyMoveManager.enemyArray.push(this);
+        delete Common.enemyMoveManager.enemyArrayRun[Common.enemyMoveManager.enemyArrayRun.indexOf(this)];
     };
     return Enemy;
 }(egret.Shape));

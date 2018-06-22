@@ -235,15 +235,22 @@ var Bullet = (function (_super) {
         this.removeEventListener(egret.Event.ENTER_FRAME, this.operateBulletRun, this);
     };
     Bullet.prototype.operateBulletRun = function () {
+        for (var _i = 0, _a = Common.enemyMoveManager.enemyArrayRun; _i < _a.length; _i++) {
+            var enemy = _a[_i];
+            Common.shoot(enemy, this);
+        }
         if (Common.FRAME_STATUS) {
             this.y -= this.speed;
             if (this.y <= this.width) {
-                Common.player.bulletArray.push(this);
-                this.removeEventForRun();
-                if (this.parent) {
-                    this.parent.removeChild(this);
-                }
+                this.stop();
             }
+        }
+    };
+    Bullet.prototype.stop = function () {
+        Common.player.bulletArray.push(this);
+        this.removeEventForRun();
+        if (this.parent) {
+            this.parent.removeChild(this);
         }
     };
     return Bullet;
@@ -302,6 +309,10 @@ var Boom = (function (_super) {
         if (Common.FRAME_STATUS) {
             this.y += this.speedY;
             this.x += this.speedX;
+            for (var _i = 0, _a = Common.enemyMoveManager.enemyArrayRun; _i < _a.length; _i++) {
+                var enemy = _a[_i];
+                Common.boom(enemy, this);
+            }
             if (this.y <= 0 || this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
                 this.removeEventForRun();
                 this.parent.removeChild(this);
