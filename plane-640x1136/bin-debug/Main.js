@@ -226,11 +226,15 @@ var Main = (function (_super) {
         btnA.touchEnabled = true;
         btnA.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (evt) {
             btnA.alpha = 0.5;
-            Common.player.longShoot();
+            if (Common.FRAME_STATUS) {
+                Common.player.longShoot();
+            }
         }, this);
         btnA.addEventListener(egret.TouchEvent.TOUCH_END, function (evt) {
             btnA.alpha = 1;
-            Common.player.stopShoot();
+            if (Common.FRAME_STATUS) {
+                Common.player.stopShoot();
+            }
         }, this);
         this.addChild(btnA);
         var btnB = new egret.Shape();
@@ -240,7 +244,9 @@ var Main = (function (_super) {
         btnB.touchEnabled = true;
         btnB.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (evt) {
             btnB.alpha = 0.5;
-            Common.player.boom();
+            if (Common.FRAME_STATUS) {
+                Common.player.boom();
+            }
         }, this);
         btnB.addEventListener(egret.TouchEvent.TOUCH_END, function (evt) {
             btnB.alpha = 1;
@@ -256,21 +262,24 @@ var Main = (function (_super) {
         this.addChild(btnStart);
         btnStart.touchEnabled = true;
         btnStart.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (evt) {
-            if (!Common.FRAME_STATUS) {
-                Common.system.timer.start();
-                setTimeout(function () {
+            if (Common.GAME_STATUS) {
+                if (!Common.FRAME_STATUS) {
+                    Common.system.timer.start();
+                    Main.soundChannel = Main.sound.play(0, -1);
+                    setTimeout(function () {
+                        Common.FRAME_STATUS = !Common.FRAME_STATUS;
+                    }, Common.system.dely);
+                    Common.system.pauseTimeCount = Common.system.pauseTimeCount + egret.getTimer() - Common.system.pauseTime;
+                }
+                else {
+                    Common.system.timer.stop();
+                    Main.soundChannel.stop();
+                    Common.system.pauseTime = egret.getTimer();
+                    Common.system.dely = (egret.getTimer() - Common.system.startTime - Common.system.pauseTimeCount) % 1000;
                     Common.FRAME_STATUS = !Common.FRAME_STATUS;
-                }, Common.system.dely);
-                Common.system.pauseTimeCount = Common.system.pauseTimeCount + egret.getTimer() - Common.system.pauseTime;
-                console.log(Common.system.pauseTimeCount);
+                }
+                Common.gameStageContainer.pausePanel.show();
             }
-            else {
-                Common.system.timer.stop();
-                Common.system.pauseTime = egret.getTimer();
-                Common.system.dely = (egret.getTimer() - Common.system.startTime - Common.system.pauseTimeCount) % 1000;
-                Common.FRAME_STATUS = !Common.FRAME_STATUS;
-            }
-            Common.gameStageContainer.pausePanel.show();
             btnStart.alpha = 0.5;
         }, this);
         btnStart.addEventListener(egret.TouchEvent.TOUCH_END, function (evt) {
@@ -291,8 +300,8 @@ var Main = (function (_super) {
         this.playBgm();
     };
     Main.prototype.playBgm = function () {
-        var sound = RES.getRes("bgm_mp3");
-        Main.soundChannel = sound.play(0, -1);
+        Main.sound = RES.getRes("bgm_mp3");
+        Main.soundChannel = Main.sound.play(0, -1);
     };
     Main.prototype.rockerEvent = function (evt, rockerRadius2, rocker2) {
         var b = Math.abs(evt.stageX - Main.rockerX);

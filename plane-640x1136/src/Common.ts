@@ -1,4 +1,6 @@
 class Common {
+
+    public static GAME_STATUS:boolean = true;
     
     public static FRAME_STATUS:boolean = true;
 
@@ -65,12 +67,31 @@ class Common {
                 egret.Tween.get(boom).to({scaleX:5, scaleY:5}, 500).call(function() {
                     Common.gameStageContainer.removeChild(boom);
                 });
+                Common.gameStageContainer.pointPanel.addPoint();
             }
     }
 
     static hit(obj1:Player, obj2:Enemy) {
-        if (Common.hitTestP(obj1, obj2)) {
-                Common.FRAME_STATUS = false;
+        if (!Common.player.invincibleStatus && Common.hitTestP(obj1, obj2)) {
+                if (Common.gameStageContainer.pointPanel.HP == 0) {
+                    Common.gameOver(obj1, obj2);
+                } else {
+                    Common.player.invincibleStatus = true;
+                    let bruiseSound:egret.Sound = RES.getRes("bruise_mp3");
+                    bruiseSound.play(0, 1);
+                    egret.Tween.get(Common.player).to({alpha:0.3}, 250).to({alpha:1}, 250).to({alpha:0.3}, 250).to({alpha:1}, 250)
+                    .to({alpha:0.3}, 250).to({alpha:1}, 250).to({alpha:0.3}, 250).to({alpha:1}, 250)
+                    .to({alpha:0.3}, 250).to({alpha:1}, 250).to({alpha:0.3}, 250).to({alpha:1}, 250)
+                    .call(function() {
+                        Common.player.invincibleStatus = false;
+                    });
+                    Common.gameStageContainer.pointPanel.removeHP();
+                }
+            }
+    }
+
+    static gameOver(obj1:Player, obj2:Enemy) {
+        Common.FRAME_STATUS = false;
                 Common.system.timer.stop();
                 Common.gameStageContainer.removeChild(obj1);
                 Common.gameStageContainer.removeChild(obj2);
@@ -91,10 +112,10 @@ class Common {
                 Common.gameStageContainer.addChild(boom);
                 egret.Tween.get(boom).to({scaleX:5, scaleY:5}, 500).call(function() {
                     Common.gameStageContainer.removeChild(boom);
-                    Common.gameStageContainer.pausePanel.textField.text = "DEAD";
-                    Common.gameStageContainer.pausePanel.show();
+                    Common.gameStageContainer.gameOverPanel.show();
                 });
-            }
+                Main.soundChannel.stop();
+                Common.player.soundBoom.play(0,1);
     }
 
     static hitTestP(obj1: egret.DisplayObject,obj2: egret.DisplayObject): boolean {

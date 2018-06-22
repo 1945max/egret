@@ -23,6 +23,7 @@ var GameStageContainer = (function (_super) {
         _this.createScreen(width, height);
         _this.createPointPanel(width, height);
         _this.createPausePanel(width, height);
+        _this.createGameOverPanel(width, height);
         return _this;
     }
     GameStageContainer.prototype.createScreen = function (width, height) {
@@ -40,6 +41,9 @@ var GameStageContainer = (function (_super) {
     };
     GameStageContainer.prototype.createPausePanel = function (width, height) {
         this.pausePanel = new PausePanel(0, 0, width, height);
+    };
+    GameStageContainer.prototype.createGameOverPanel = function (width, height) {
+        this.gameOverPanel = new GameOverPanel(0, 0, width, height);
     };
     return GameStageContainer;
 }(egret.DisplayObjectContainer));
@@ -80,6 +84,34 @@ var PausePanel = (function (_super) {
     return PausePanel;
 }(egret.DisplayObjectContainer));
 __reflect(PausePanel.prototype, "PausePanel");
+var GameOverPanel = (function (_super) {
+    __extends(GameOverPanel, _super);
+    function GameOverPanel(x, y, width, height) {
+        var _this = _super.call(this) || this;
+        var bg = new egret.Shape();
+        bg.graphics.beginFill(0x000000, 0.5);
+        bg.graphics.drawRect(0, 0, width, height);
+        bg.graphics.endFill();
+        _this.addChild(bg);
+        _this.textField = new egret.TextField();
+        _this.textField.text = "GAME OVER";
+        _this.textField.size = 70;
+        _this.textField.textColor = 0xffffff;
+        _this.textField.x = (width - _this.textField.width) / 2;
+        _this.textField.y = (height - _this.textField.height) / 2;
+        _this.addChild(_this.textField);
+        _this.x = x;
+        _this.y = y;
+        _this.width = width;
+        _this.height = height;
+        return _this;
+    }
+    GameOverPanel.prototype.show = function () {
+        Common.gameStageContainer.addChild(this);
+    };
+    return GameOverPanel;
+}(egret.DisplayObjectContainer));
+__reflect(GameOverPanel.prototype, "GameOverPanel");
 /**
  * 参数面板对象
  *
@@ -103,22 +135,22 @@ var PointPanel = (function (_super) {
         return _this;
     }
     PointPanel.prototype.createContent = function () {
-        var point = new egret.TextField();
-        point.text = this.point + "";
-        point.size = 40;
-        point.textColor = 0xfff000;
-        point.x = 10;
-        point.y = 10;
-        this.addChild(point);
-        this.setChildIndex(point, 3);
-        var time = new egret.TextField();
-        time.text = this.timeStr + "";
-        time.size = 40;
-        time.textColor = 0xfffeee;
-        time.x = this.width - 10 - time.width;
-        time.y = 10;
-        this.addChild(time);
-        this.setChildIndex(time, 3);
+        this.PointText = new egret.TextField();
+        this.PointText.text = this.point + "";
+        this.PointText.size = 40;
+        this.PointText.textColor = 0xfff000;
+        this.PointText.x = 10;
+        this.PointText.y = 10;
+        this.addChild(this.PointText);
+        this.setChildIndex(this.PointText, 3);
+        this.timeText = new egret.TextField();
+        this.timeText.text = this.timeStr + "";
+        this.timeText.size = 40;
+        this.timeText.textColor = 0xfffeee;
+        this.timeText.x = this.PointText.x;
+        this.timeText.y = this.PointText.y + this.PointText.height + 10;
+        this.addChild(this.timeText);
+        this.setChildIndex(this.timeText, 3);
         for (var i = 0; i < this.HP; i++) {
             var hrBox = new egret.Shape();
             hrBox.graphics.beginFill(0xff0000, 1);
@@ -175,6 +207,14 @@ var PointPanel = (function (_super) {
                 return;
             }
         }
+    };
+    PointPanel.prototype.addPoint = function () {
+        this.point += 100;
+        this.PointText.text = this.point + "";
+    };
+    PointPanel.prototype.addTime = function () {
+        this.timeStr += 1;
+        this.timeText.text = this.timeStr + "";
     };
     return PointPanel;
 }(egret.DisplayObjectContainer));

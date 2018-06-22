@@ -58,37 +58,56 @@ var Common = (function () {
             egret.Tween.get(boom_2).to({ scaleX: 5, scaleY: 5 }, 500).call(function () {
                 Common.gameStageContainer.removeChild(boom_2);
             });
+            Common.gameStageContainer.pointPanel.addPoint();
         }
     };
     Common.hit = function (obj1, obj2) {
-        if (Common.hitTestP(obj1, obj2)) {
-            Common.FRAME_STATUS = false;
-            Common.system.timer.stop();
-            Common.gameStageContainer.removeChild(obj1);
-            Common.gameStageContainer.removeChild(obj2);
-            var boom_3 = new egret.Shape();
-            boom_3.graphics.beginFill(0xffff00, 1);
-            boom_3.graphics.drawCircle(0, 0, 10);
-            boom_3.graphics.endFill();
-            if (obj1.x > obj2.x) {
-                boom_3.x = (obj1.x - obj2.x) / 2 + obj2.x;
+        if (!Common.player.invincibleStatus && Common.hitTestP(obj1, obj2)) {
+            if (Common.gameStageContainer.pointPanel.HP == 0) {
+                Common.gameOver(obj1, obj2);
             }
             else {
-                boom_3.x = (obj2.x - obj2.x) / 2 + obj2.x;
+                Common.player.invincibleStatus = true;
+                var bruiseSound = RES.getRes("bruise_mp3");
+                bruiseSound.play(0, 1);
+                egret.Tween.get(Common.player).to({ alpha: 0.3 }, 250).to({ alpha: 1 }, 250).to({ alpha: 0.3 }, 250).to({ alpha: 1 }, 250)
+                    .to({ alpha: 0.3 }, 250).to({ alpha: 1 }, 250).to({ alpha: 0.3 }, 250).to({ alpha: 1 }, 250)
+                    .to({ alpha: 0.3 }, 250).to({ alpha: 1 }, 250).to({ alpha: 0.3 }, 250).to({ alpha: 1 }, 250)
+                    .call(function () {
+                    Common.player.invincibleStatus = false;
+                });
+                Common.gameStageContainer.pointPanel.removeHP();
             }
-            if (obj1.y > obj2.y) {
-                boom_3.y = (obj1.y - obj2.y) / 2 + obj2.y;
-            }
-            else {
-                boom_3.y = (obj2.y - obj1.y) / 2 + obj1.y;
-            }
-            Common.gameStageContainer.addChild(boom_3);
-            egret.Tween.get(boom_3).to({ scaleX: 5, scaleY: 5 }, 500).call(function () {
-                Common.gameStageContainer.removeChild(boom_3);
-                Common.gameStageContainer.pausePanel.textField.text = "DEAD";
-                Common.gameStageContainer.pausePanel.show();
-            });
         }
+    };
+    Common.gameOver = function (obj1, obj2) {
+        Common.FRAME_STATUS = false;
+        Common.system.timer.stop();
+        Common.gameStageContainer.removeChild(obj1);
+        Common.gameStageContainer.removeChild(obj2);
+        var boom = new egret.Shape();
+        boom.graphics.beginFill(0xffff00, 1);
+        boom.graphics.drawCircle(0, 0, 10);
+        boom.graphics.endFill();
+        if (obj1.x > obj2.x) {
+            boom.x = (obj1.x - obj2.x) / 2 + obj2.x;
+        }
+        else {
+            boom.x = (obj2.x - obj2.x) / 2 + obj2.x;
+        }
+        if (obj1.y > obj2.y) {
+            boom.y = (obj1.y - obj2.y) / 2 + obj2.y;
+        }
+        else {
+            boom.y = (obj2.y - obj1.y) / 2 + obj1.y;
+        }
+        Common.gameStageContainer.addChild(boom);
+        egret.Tween.get(boom).to({ scaleX: 5, scaleY: 5 }, 500).call(function () {
+            Common.gameStageContainer.removeChild(boom);
+            Common.gameStageContainer.gameOverPanel.show();
+        });
+        Main.soundChannel.stop();
+        Common.player.soundBoom.play(0, 1);
     };
     Common.hitTestP = function (obj1, obj2) {
         if (obj1 && obj2) {
@@ -102,6 +121,7 @@ var Common = (function () {
             return rect1.intersects(rect2);
         }
     };
+    Common.GAME_STATUS = true;
     Common.FRAME_STATUS = true;
     return Common;
 }());

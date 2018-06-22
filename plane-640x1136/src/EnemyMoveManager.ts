@@ -8,6 +8,8 @@ class EnemyMoveManager {
 
     private spaceY:number;
 
+    public soundEnemyBoom:egret.Sound;
+
     private indexs;
 
     public constructor() {
@@ -15,6 +17,7 @@ class EnemyMoveManager {
         this.spaceY = Math.sqrt(Math.pow(Common.player.width, 2)*2);
         this.indexs = Common.mapConfigs.enemy_team;
         this.createEnemy();
+        this.soundEnemyBoom = RES.getRes("enemy_boom_mp3");
     }
 
     public createEnemy() {

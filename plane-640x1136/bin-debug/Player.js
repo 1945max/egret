@@ -20,8 +20,11 @@ var Player = (function (_super) {
         _this.speed = 5;
         _this.bulletArray = [];
         _this.boomBox = [];
+        _this.invincibleStatus = false;
         _this.createBulletArray();
         _this.createBoomArray();
+        _this.soundShoot = RES.getRes("shoot_mp3");
+        _this.soundBoom = RES.getRes("boom_mp3");
         return _this;
     }
     Player.prototype.setOption = function (cos, stageX, stageY, oX, oY) {
@@ -51,6 +54,7 @@ var Player = (function (_super) {
             this.parent.addChild(currentBullet);
             this.parent.swapChildren(currentBullet, this);
             this.parent.swapChildren(this, Common.gameStageContainer.pointPanel);
+            this.soundShoot.play(0, 1);
         }
     };
     Player.prototype.createBulletArray = function () {

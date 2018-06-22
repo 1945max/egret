@@ -17,6 +17,7 @@ class System {
     private init() {
         this.timer = new egret.Timer(1000, Common.mapConfigs.time);
         this.timer.addEventListener(egret.TimerEvent.TIMER, function(evt:egret.TimerEvent):void {
+            Common.gameStageContainer.pointPanel.addTime();
             Common.enemyMoveManager.operateEnemyRun(Common.system.timer.currentCount);
         }, this);
         this.startTime = egret.getTimer();

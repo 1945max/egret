@@ -91,6 +91,8 @@ class Main extends egret.DisplayObjectContainer {
 
     public static soundChannel:egret.SoundChannel;
 
+    public static sound:egret.Sound;
+
     /**
      * 创建游戏场景
      * Create a game scene
@@ -197,11 +199,15 @@ class Main extends egret.DisplayObjectContainer {
         btnA.touchEnabled = true;
         btnA.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function(evt:egret.TouchEvent):void {
             btnA.alpha = 0.5;
-            Common.player.longShoot();
+            if (Common.FRAME_STATUS) {
+                Common.player.longShoot();
+            }
         }, this);
         btnA.addEventListener(egret.TouchEvent.TOUCH_END, function(evt:egret.TouchEvent):void {
             btnA.alpha = 1;
-            Common.player.stopShoot();
+            if (Common.FRAME_STATUS) {
+                Common.player.stopShoot();
+            }
         }, this);
         this.addChild(btnA);
 
@@ -212,7 +218,9 @@ class Main extends egret.DisplayObjectContainer {
         btnB.touchEnabled = true;
         btnB.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function(evt:egret.TouchEvent):void {
             btnB.alpha = 0.5;
-            Common.player.boom();
+            if (Common.FRAME_STATUS) {
+                Common.player.boom();
+            }
         }, this);
         btnB.addEventListener(egret.TouchEvent.TOUCH_END, function(evt:egret.TouchEvent):void {
             btnB.alpha = 1;
@@ -229,20 +237,23 @@ class Main extends egret.DisplayObjectContainer {
         this.addChild(btnStart);
         btnStart.touchEnabled = true;
         btnStart.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function(evt:egret.TouchEvent):void {
+            if (Common.GAME_STATUS) {
             if (!Common.FRAME_STATUS) {
-                    Common.system.timer.start();
+                Common.system.timer.start();
+                Main.soundChannel = Main.sound.play(0, -1);
                 setTimeout(function() {
                     Common.FRAME_STATUS = !Common.FRAME_STATUS;
                 }, Common.system.dely)
                 Common.system.pauseTimeCount = Common.system.pauseTimeCount+egret.getTimer()-Common.system.pauseTime;
-                console.log(Common.system.pauseTimeCount);
             } else {
                 Common.system.timer.stop();
+                Main.soundChannel.stop();
                 Common.system.pauseTime = egret.getTimer();
                 Common.system.dely = (egret.getTimer()-Common.system.startTime-Common.system.pauseTimeCount)%1000;
                 Common.FRAME_STATUS = !Common.FRAME_STATUS;
             }
-            Common.gameStageContainer.pausePanel.show();
+                Common.gameStageContainer.pausePanel.show();
+            }
             btnStart.alpha = 0.5;
         }, this);
         btnStart.addEventListener(egret.TouchEvent.TOUCH_END, function(evt:egret.TouchEvent):void {
@@ -267,8 +278,8 @@ class Main extends egret.DisplayObjectContainer {
 
 
     private playBgm() {
-        let sound:egret.Sound = RES.getRes("bgm_mp3");
-        Main.soundChannel = sound.play(0, -1);
+        Main.sound = RES.getRes("bgm_mp3");
+        Main.soundChannel = Main.sound.play(0, -1);
     }
 
     private rockerEvent(evt:egret.TouchEvent, rockerRadius2:number, rocker2:egret.Shape) {

@@ -9,6 +9,8 @@ class GameStageContainer extends egret.DisplayObjectContainer {
 
     public pausePanel:PausePanel;
 
+    public gameOverPanel:GameOverPanel;
+
     public constructor(x:number, y:number, width:number, height:number) {
         super();
         this.x = x;
@@ -18,6 +20,7 @@ class GameStageContainer extends egret.DisplayObjectContainer {
         this.createScreen(width, height);
         this.createPointPanel(width, height);
         this.createPausePanel(width, height);
+        this.createGameOverPanel(width, height);
     }
 
     private createScreen(width:number, height:number) {
@@ -37,6 +40,10 @@ class GameStageContainer extends egret.DisplayObjectContainer {
 
     private createPausePanel(width:number, height:number) {
         this.pausePanel = new PausePanel(0, 0, width, height);
+    }
+
+    private createGameOverPanel(width:number, height:number) {
+        this.gameOverPanel = new GameOverPanel(0, 0, width, height);
     }
 
 }
@@ -78,6 +85,36 @@ class PausePanel extends egret.DisplayObjectContainer {
 
 }
 
+class GameOverPanel extends egret.DisplayObjectContainer {
+
+    public textField:egret.TextField;
+
+    public constructor(x:number, y:number, width:number, height:number) {
+        super();
+        let bg = new egret.Shape();
+        bg.graphics.beginFill(0x000000, 0.5);
+        bg.graphics.drawRect(0, 0, width, height);
+        bg.graphics.endFill();
+        this.addChild(bg);
+        this.textField = new egret.TextField();
+        this.textField.text = "GAME OVER";
+        this.textField.size = 70;
+        this.textField.textColor = 0xffffff;
+        this.textField.x = (width - this.textField.width)/2;
+        this.textField.y = (height - this.textField.height)/2;
+        this.addChild(this.textField);
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+
+    public show() {
+        Common.gameStageContainer.addChild(this);
+    }
+
+}
+
 /**
  * 参数面板对象
  * 
@@ -85,10 +122,14 @@ class PausePanel extends egret.DisplayObjectContainer {
 class PointPanel extends egret.DisplayObjectContainer {
 
     public point:number = 0;
+
+    private PointText:egret.TextField;
     
     public time = new egret.Timer(1000, -1);
 
     public timeStr:number = 0;
+
+    private timeText:egret.TextField;
 
     public HP:number = 3;
 
@@ -108,22 +149,22 @@ class PointPanel extends egret.DisplayObjectContainer {
     }
 
     private createContent() {
-        let point = new  egret.TextField();
-        point.text = this.point + "";
-        point.size = 40;
-        point.textColor = 0xfff000;
-        point.x = 10;
-        point.y = 10;
-        this.addChild(point);
-        this.setChildIndex(point, 3);
-        let time = new  egret.TextField();
-        time.text = this.timeStr + "";
-        time.size = 40;
-        time.textColor = 0xfffeee;
-        time.x = this.width - 10 - time.width;
-        time.y = 10;
-        this.addChild(time);
-        this.setChildIndex(time, 3);
+        this.PointText = new  egret.TextField();
+        this.PointText.text = this.point + "";
+        this.PointText.size = 40;
+        this.PointText.textColor = 0xfff000;
+        this.PointText.x = 10;
+        this.PointText.y = 10;
+        this.addChild(this.PointText);
+        this.setChildIndex(this.PointText, 3);
+        this.timeText = new  egret.TextField();
+        this.timeText.text = this.timeStr + "";
+        this.timeText.size = 40;
+        this.timeText.textColor = 0xfffeee;
+        this.timeText.x = this.PointText.x;
+        this.timeText.y = this.PointText.y+this.PointText.height+10;
+        this.addChild(this.timeText);
+        this.setChildIndex(this.timeText, 3);
         for (var i = 0;i < this.HP;i++) {
             let hrBox = new egret.Shape();
             hrBox.graphics.beginFill(0xff0000, 1);
@@ -183,6 +224,16 @@ class PointPanel extends egret.DisplayObjectContainer {
                 return;
             }
        }
+    }
+
+    public addPoint() {
+        this.point+=100;
+        this.PointText.text = this.point+"";
+    }
+
+    public addTime() {
+        this.timeStr+=1;
+        this.timeText.text = this.timeStr+"";
     }
 
 }

@@ -24,12 +24,20 @@ class Player extends egret.Shape {
 
     private oY:number;
 
+    private soundShoot:egret.Sound;
+
+    public soundBoom:egret.Sound;
+
+    public invincibleStatus:boolean = false;
+
     /***角速度与运动计算相关参数***/
 
     public constructor() {
         super();
         this.createBulletArray();
         this.createBoomArray();
+        this.soundShoot = RES.getRes("shoot_mp3");
+        this.soundBoom = RES.getRes("boom_mp3");
     }
 
     public setOption(cos:number, stageX:number, stageY:number, oX:number, oY:number) {
@@ -64,6 +72,9 @@ class Player extends egret.Shape {
         this.parent.addChild(currentBullet);
         this.parent.swapChildren(currentBullet, this);
         this.parent.swapChildren(this, Common.gameStageContainer.pointPanel);
+
+        this.soundShoot.play(0, 1);
+
         }
     }
 
@@ -230,6 +241,7 @@ class Player extends egret.Shape {
         }
         return 0;
     }
+
 }
 
 /**

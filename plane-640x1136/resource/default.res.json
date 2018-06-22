@@ -2,7 +2,7 @@
 	"groups": [
 		{
 			"name": "preload",
-			"keys": "bgm_mp3,mapConfig_json"
+			"keys": "bgm_mp3,mapConfig_json,shoot_mp3,get_gift_mp3,boom_mp3,bruise_mp3"
 		}
 	],
 	"resources": [
@@ -15,6 +15,26 @@
 			"name": "mapConfig_json",
 			"type": "json",
 			"url": "configs/mapConfig.json"
+		},
+		{
+			"name": "shoot_mp3",
+			"type": "sound",
+			"url": "assets/shoot.mp3"
+		},
+		{
+			"name": "get_gift_mp3",
+			"type": "sound",
+			"url": "assets/get_gift.mp3"
+		},
+		{
+			"name": "boom_mp3",
+			"type": "sound",
+			"url": "assets/boom.mp3"
+		},
+		{
+			"name": "bruise_mp3",
+			"type": "sound",
+			"url": "assets/bruise.mp3"
 		}
 	]
 }
