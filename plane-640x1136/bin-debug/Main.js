@@ -114,7 +114,7 @@ var Main = (function (_super) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        loadingView = new LoadingUI();
+                        loadingView = new LoadingUI(this.stage.stageWidth, this.stage.stageHeight);
                         this.stage.addChild(loadingView);
                         return [4 /*yield*/, RES.loadConfig("resource/default.res.json", "resource/")];
                     case 1:
@@ -122,7 +122,6 @@ var Main = (function (_super) {
                         return [4 /*yield*/, RES.loadGroup("preload", 1, loadingView)];
                     case 2:
                         _a.sent();
-                        this.stage.removeChild(loadingView);
                         return [3 /*break*/, 4];
                     case 3:
                         e_1 = _a.sent();

@@ -29,23 +29,43 @@
 
 class LoadingUI extends egret.Sprite implements RES.PromiseTaskReporter {
 
-    public constructor() {
+    public constructor(width:number, height:number) {
         super();
-        this.createView();
+        this.createView(width, height);
     }
 
     private textField: egret.TextField;
 
-    private createView(): void {
+    private progress: egret.Shape;
+
+    private progressb: egret.Shape;
+
+    private createView(width:number, height:number): void {
         this.textField = new egret.TextField();
         this.addChild(this.textField);
         this.textField.y = 300;
         this.textField.width = 480;
         this.textField.height = 100;
         this.textField.textAlign = "center";
+        this.progressb = new egret.Shape();
+        this.progressb.graphics.beginFill(0x000000, 1);
+        this.progressb.graphics.drawRect(0, 0, width, height/50);
+        this.progressb.graphics.endFill();
+        this.progressb.y =  this.textField.y +  this.textField.height + 10;
+        this.addChild(this.progressb);
+        this.progress = new egret.Shape();
+        this.progress.y =  this.progressb.y;
     }
 
     public onProgress(current: number, total: number): void {
-        this.textField.text = `Loading...${current}/${total}`;
+        this.textField.text = `加载中...${current}/${total}`;
+        if (this.contains(this.progress)) {
+            this.removeChild(this.progress);
+        }
+        this.progress.width = 1000;
+        this.progress.graphics.beginFill(0x00cc00, 1);
+        this.progress.graphics.drawRect(0, 0, (this.progressb.width/total)*current, this.progressb.height);
+        this.progress.graphics.endFill();
+        this.addChild(this.progress);
     }
 }

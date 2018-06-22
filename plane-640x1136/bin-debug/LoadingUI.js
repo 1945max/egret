@@ -38,21 +38,37 @@ r.prototype = e.prototype, t.prototype = new r();
 };
 var LoadingUI = (function (_super) {
     __extends(LoadingUI, _super);
-    function LoadingUI() {
+    function LoadingUI(width, height) {
         var _this = _super.call(this) || this;
-        _this.createView();
+        _this.createView(width, height);
         return _this;
     }
-    LoadingUI.prototype.createView = function () {
+    LoadingUI.prototype.createView = function (width, height) {
         this.textField = new egret.TextField();
         this.addChild(this.textField);
         this.textField.y = 300;
         this.textField.width = 480;
         this.textField.height = 100;
         this.textField.textAlign = "center";
+        this.progressb = new egret.Shape();
+        this.progressb.graphics.beginFill(0x000000, 1);
+        this.progressb.graphics.drawRect(0, 0, width, height / 50);
+        this.progressb.graphics.endFill();
+        this.progressb.y = this.textField.y + this.textField.height + 10;
+        this.addChild(this.progressb);
+        this.progress = new egret.Shape();
+        this.progress.y = this.progressb.y;
     };
     LoadingUI.prototype.onProgress = function (current, total) {
-        this.textField.text = "Loading..." + current + "/" + total;
+        this.textField.text = "\u52A0\u8F7D\u4E2D..." + current + "/" + total;
+        if (this.contains(this.progress)) {
+            this.removeChild(this.progress);
+        }
+        this.progress.width = 1000;
+        this.progress.graphics.beginFill(0x00cc00, 1);
+        this.progress.graphics.drawRect(0, 0, (this.progressb.width / total) * current, this.progressb.height);
+        this.progress.graphics.endFill();
+        this.addChild(this.progress);
     };
     return LoadingUI;
 }(egret.Sprite));
