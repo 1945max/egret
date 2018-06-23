@@ -17,27 +17,21 @@ var Enemy = (function (_super) {
         _this.bulletArray = [];
         _this.speedX = speedX;
         _this.speedY = speedY;
-        _this.createBullet();
         return _this;
     }
-    Enemy.prototype.shoot = function () {
-        var bullet = this.bulletArray[this.bulletArray.length - 1];
-        bullet.x = this.x;
-        bullet.y = this.y;
-        this.bulletArray.pop();
-        bullet.shootToTarget(this.x, this.y, Common.player.x, Common.player.y);
-    };
-    Enemy.prototype.createBullet = function () {
-        for (var i = 0; i < 10; i++) {
-            var bulletOfEnemy = new BulletOfEnemy();
-            bulletOfEnemy.graphics.beginFill(0x000066, 1);
-            bulletOfEnemy.graphics.drawCircle(0, 0, 5);
-            bulletOfEnemy.graphics.endFill();
-            bulletOfEnemy.name = this.name + "-bullet_" + i;
-            this.bulletArray.push(bulletOfEnemy);
+    Enemy.prototype.shoot = function (current) {
+        if (Common.enemyMoveManager.bulletArray.length > 0) {
+            var enemyBullet = Common.enemyMoveManager.bulletArray.pop();
+            enemyBullet.x = current.x;
+            enemyBullet.y = current.y;
+            Common.gameStageContainer.addChild(enemyBullet);
+            enemyBullet.shootToTarget(enemyBullet.x, enemyBullet.y, Common.player.x + Common.player.width / 2, Common.player.y + Common.player.height / 2);
         }
     };
     Enemy.prototype.addEventForRun = function () {
+        var enemyX = this.x;
+        var enemyY = this.y;
+        setTimeout(this.shoot(this), 2000);
         this.addEventListener(egret.Event.ENTER_FRAME, this.operateEnemyRun, this);
     };
     Enemy.prototype.removeEventForRun = function () {
@@ -80,17 +74,17 @@ var BulletOfEnemy = (function (_super) {
         var a = Math.abs(y - targetY);
         var c = Math.sqrt(Math.pow(a, 2) + Math.pow(a, 2));
         var cos = b / c;
-        if ((x - targetX) > 0) {
-            this.speedX = this.speed * cos;
-        }
-        else if ((x - targetX) < 0) {
+        if (x > targetX) {
             this.speedX = -1 * this.speed * cos;
         }
-        if ((y - targetY) > 0) {
-            this.speedY = Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speedX, 2));
+        else if (x < targetX) {
+            this.speedX = this.speed * cos;
         }
-        else if ((y - targetY) < 0) {
+        if (y > targetY) {
             this.speedY = -1 * Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speedX, 2));
+        }
+        else if (y < targetY) {
+            this.speedY = Math.sqrt(Math.pow(this.speed, 2) - Math.pow(this.speedX, 2));
         }
         this.addEventForRun();
     };
@@ -104,10 +98,13 @@ var BulletOfEnemy = (function (_super) {
         if (Common.FRAME_STATUS) {
             this.x += this.speedX;
             this.y += this.speedY;
-            if (this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
-                this.removeEventForRun();
-                this.parent.removeChild(this);
-                this.parent.getChildByName(this.name.split("-")[0]).bulletArray.push(this);
+            if (this.parent) {
+                if (this.y >= this.parent.height || this.x <= 0 || this.x >= this.parent.height) {
+                    this.removeEventForRun();
+                    this.parent.removeChild(this);
+                    Common.enemyMoveManager.bulletArray.push(this);
+                }
+                Common.hit(Common.player, this);
             }
         }
     };

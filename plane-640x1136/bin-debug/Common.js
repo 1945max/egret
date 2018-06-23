@@ -67,6 +67,19 @@ var Common = (function () {
                 Common.gameOver(obj1, obj2);
             }
             else {
+                if (obj2.parent) {
+                    obj2.parent.removeChild(obj2);
+                }
+                var boom_3 = new egret.Shape();
+                boom_3.graphics.beginFill(0xffff00, 1);
+                boom_3.graphics.drawCircle(0, 0, 10);
+                boom_3.graphics.endFill();
+                boom_3.x = obj2.x;
+                boom_3.y = obj2.y;
+                Common.gameStageContainer.addChild(boom_3);
+                egret.Tween.get(boom_3).to({ scaleX: 5, scaleY: 5 }, 500).call(function () {
+                    Common.gameStageContainer.removeChild(boom_3);
+                });
                 Common.player.invincibleStatus = true;
                 var bruiseSound = RES.getRes("bruise_mp3");
                 bruiseSound.play(0, 1);

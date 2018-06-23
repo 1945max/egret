@@ -10,6 +10,8 @@ class EnemyMoveManager {
 
     public soundEnemyBoom:egret.Sound;
 
+    public bulletArray:Array<BulletOfEnemy> = [];
+
     private indexs;
 
     public constructor() {
@@ -17,6 +19,7 @@ class EnemyMoveManager {
         this.spaceY = Math.sqrt(Math.pow(Common.player.width, 2)*2);
         this.indexs = Common.mapConfigs.enemy_team;
         this.createEnemy();
+        this.createBullet();
         this.soundEnemyBoom = RES.getRes("enemy_boom_mp3");
     }
 
@@ -44,6 +47,17 @@ class EnemyMoveManager {
                 Common.gameStageContainer.addChild(enemy);
                 enemy.addEventForRun();
             }
+        }
+    }
+
+    private createBullet() {
+        for (var i = 0;i < 10;i++) {
+            let bulletOfEnemy = new BulletOfEnemy();
+            bulletOfEnemy.graphics.beginFill(0xffffff, 1);
+            bulletOfEnemy.graphics.drawCircle(0, 0, 5);
+            bulletOfEnemy.graphics.endFill();
+            bulletOfEnemy.name = "bullet_"+i;
+            this.bulletArray.push(bulletOfEnemy);
         }
     }
 

@@ -71,11 +71,24 @@ class Common {
             }
     }
 
-    static hit(obj1:Player, obj2:Enemy) {
+    static hit(obj1:Player, obj2:egret.DisplayObject) {
         if (!Common.player.invincibleStatus && Common.hitTestP(obj1, obj2)) {
                 if (Common.gameStageContainer.pointPanel.HP == 0) {
                     Common.gameOver(obj1, obj2);
                 } else {
+                    if (obj2.parent) {
+                        obj2.parent.removeChild(obj2);
+                    }
+                    let boom = new egret.Shape();
+                    boom.graphics.beginFill(0xffff00, 1);
+                    boom.graphics.drawCircle(0, 0, 10);
+                    boom.graphics.endFill();
+                    boom.x = obj2.x;
+                    boom.y = obj2.y;
+                    Common.gameStageContainer.addChild(boom);
+                    egret.Tween.get(boom).to({scaleX:5, scaleY:5}, 500).call(function() {
+                    Common.gameStageContainer.removeChild(boom);
+                    });
                     Common.player.invincibleStatus = true;
                     let bruiseSound:egret.Sound = RES.getRes("bruise_mp3");
                     bruiseSound.play(0, 1);
@@ -88,9 +101,10 @@ class Common {
                     Common.gameStageContainer.pointPanel.removeHP();
                 }
             }
+                 
     }
 
-    static gameOver(obj1:Player, obj2:Enemy) {
+    static gameOver(obj1:Player, obj2:egret.DisplayObject) {
         Common.FRAME_STATUS = false;
                 Common.system.timer.stop();
                 Common.gameStageContainer.removeChild(obj1);

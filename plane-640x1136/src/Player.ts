@@ -124,7 +124,7 @@ class Player extends egret.Shape {
             let boomArray:Array<Boom> = [];
             for (var j = 0;j < cos.length;j++) {
                 let boom = new Boom(cos[j][0], cos[j][1]);
-                boom.graphics.beginFill(0xcc0099, 1);
+                boom.graphics.beginFill(0x6600ff, 1);
                 boom.graphics.drawCircle(0, 0, 5);
                 boom.graphics.endFill();
                 boom.name = "boom_"+i+"_"+j;
